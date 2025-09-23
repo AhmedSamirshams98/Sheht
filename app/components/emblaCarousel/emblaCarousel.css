@@ -1,13 +1,12 @@
 .embla {
   margin: auto;
-  --slide-size: 100%;
-  width: 100%;
+  --slide-size: 18%;
+  width: 90%;
+  direction: ltr;
 }
 @media (min-width: 320px) {
   .embla {
-    width: 80%;
-    --slide-size: 19%;
-    --slide-spacing: 1rem;
+    --slide-size: 18%;
   }
 }
 .embla__viewport {
@@ -29,7 +28,6 @@
 .embla__slide__img {
   border-radius: 1.8rem;
   display: block;
-  height: var(--slide-height);
   width: 100%;
   object-fit: cover;
 }
@@ -44,7 +42,7 @@
 .embla__buttons {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 24rem;
+  gap: 32rem;
   align-items: center;
 }
 .embla__button {

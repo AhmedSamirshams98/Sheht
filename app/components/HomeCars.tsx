@@ -14,7 +14,6 @@ import "./emblaCarousel/emblaCarousel.css";
 import { Button } from "./ui/Button";
 
 const HomeCars = () => {
-  // بيانات السيارات مع المعلومات الإضافية
   const carsData = [
     {
       id: 1,
@@ -113,7 +112,7 @@ const HomeCars = () => {
     <div
       id="cars"
       key={car.id}
-      className="embla__slide bg-white rounded-lg overflow-hidden shadow-lg h-auto flex flex-col items-center"
+      className="embla__slide h-[62vh] md:h-[44vh] lg:h-[54vh]  bg-white rounded-lg overflow-hidden shadow-lg flex flex-col items-center "
     >
       <div className="relative w-full ">
         <Image
@@ -122,7 +121,7 @@ const HomeCars = () => {
           className="rounded-[26px]  w-full aspect-square  object-cover  "
         />
       </div>
-      <div className="   w-full justify-between h-[28vh] flex  flex-col ">
+      <div className="   w-full justify-between  flex  flex-col  h-full">
         <div className="flex flex-col ">
           <h3 className="  text-black font-semibold text-center text-[1.5vw]">
             {car.model}
@@ -173,11 +172,11 @@ const HomeCars = () => {
       <h1 className="px-[8%] text-[8vw]  md:text-[2vw] font-bold text-center !md:text-right text-gray-900">
         المعروضــات ✨
       </h1>
-      <div className=" mt-6">
+      <div className=" ">
         <EmblaCarousel slides={aboutSlides} options={OPTIONS} />
       </div>
 
-      <Button kind="secondary">عرض الكل</Button>
+      <Button kind="secondarySpecial">عرض الكل</Button>
     </div>
   );
 };

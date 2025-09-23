@@ -3,6 +3,7 @@ import backgroundimage from "../../public/images/backgroundimage.png";
 import Image from "next/image";
 import "../globals.css";
 import { Button } from "./ui/Button";
+import Link from "next/link";
 
 const HomeFirst = () => {
   return (
@@ -17,8 +18,9 @@ const HomeFirst = () => {
           سيـارة أحـلامـك!
           <br /> لحد باب البيت
         </h1>
-
-        <Button kind="primary">اطلب سيارتك الآن!</Button>
+        <Link href="/form">
+          <Button kind="primary">اطلب سيارتك الآن!</Button>
+        </Link>{" "}
       </div>
     </div>
   );

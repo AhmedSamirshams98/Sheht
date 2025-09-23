@@ -11,14 +11,16 @@ const DesktopNav = () => {
       style={{ direction: "rtl" }}
     >
       {/**nav right part  */}
-      <div className="flex flex-row items-center gap-4">
-        <Image
-          className="w-[4vw]"
-          src={shehtalogo}
-          alt="shehtatraidingcars شحتة للتجارة"
-        />
-        <h1 className="font-bold text-[1.2vw]">شحتة للتجارة</h1>
-      </div>
+      <Link href="/">
+        <div className="flex flex-row items-center gap-4">
+          <Image
+            className="w-[4vw]"
+            src={shehtalogo}
+            alt="shehtatraidingcars شحتة للتجارة"
+          />
+          <h1 className="font-bold text-[1.2vw]">شحتة للتجارة</h1>
+        </div>
+      </Link>
       {/**nav left part */}
       <div className="w-[42vw] flex flex-row items-center justify-around rounded-[42px] bg-gradient-to-r from-[#3B260680] to-[#3B260680]/50 text-[1.2vw] lg:text-[1vw]">
         {navLinks.map((link, path) => (

@@ -2,6 +2,7 @@ import Image from "next/image";
 import React from "react";
 import order from "../../public/images/order.svg";
 import { Button } from "./ui/Button";
+import Link from "next/link";
 
 const HomeHowtoOrder = () => {
   return (
@@ -10,8 +11,9 @@ const HomeHowtoOrder = () => {
         كيف يمكنك طلب سيارتك المخصصة؟
       </h1>
       <Image src={order} alt="كيف تطلب سيارتك من شحتة للتجاره" />
-
-      <Button kind="secondary">! اطلب سيارتك الآن</Button>
+      <Link href="/form">
+        <Button kind="secondary">! اطلب سيارتك الآن</Button>
+      </Link>{" "}
     </div>
   );
 };

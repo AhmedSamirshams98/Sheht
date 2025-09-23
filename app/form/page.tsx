@@ -1,12 +1,11 @@
 import React from "react";
-import exit from "../../public/images/exit.svg";
-import Image from "next/image";
+
 import { Button } from "../components/ui/Button";
 
 const page = () => {
   return (
     <div
-      className="relative min-h-[100vh] mt-[30%] md:mt-[10%] px-[8%] flex flex-col items-center gap-4  "
+      className="relative min-h-[100vh] mt-[2%] px-[8%] flex flex-col items-center gap-4  "
       style={{ direction: "rtl" }}
     >
       {/**first part of the form */}
@@ -19,14 +18,7 @@ const page = () => {
           للاستلام
         </h1>
       </div>
-      {/* <button
-          className="w-[6vw] relative flex flex-row items-center justify-center gap-4  h-[2.5vw] rounded-[48px] bg-[#ffffff]"
-          style={{ direction: "ltr" }}
-        >
-          <Image src={exit} alt="اطلب سيارتك الان في شحتة للتجاره" />
-          الغاء
-        </button> */}
-      {/* </div> */}
+
       {/**form inputs */}
       <div className="flex flex-col md:grid grid-cols-1 md:grid-cols-2 w-full gap-4">
         <div className="flex flex-col items-start w-full gap-2">

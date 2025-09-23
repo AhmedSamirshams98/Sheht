@@ -36,12 +36,14 @@ const MobileNav = () => {
   return (
     <div className="flex flex-row justify-between   w-full">
       <div className="flex flex-row items-center gap-2">
-        <Image
-          className="w-[10vw]"
-          src={shehtalogo}
-          alt="shehtatraidingcars شحتة للتجارة"
-        />
-        <h1 className="font-bold text-[4vw]">شحتة للتجارة</h1>
+        <Link href="/">
+          <Image
+            className="w-[10vw]"
+            src={shehtalogo}
+            alt="shehtatraidingcars شحتة للتجارة"
+          />
+          <h1 className="font-bold text-[4vw]">شحتة للتجارة</h1>
+        </Link>
       </div>
 
       <button
