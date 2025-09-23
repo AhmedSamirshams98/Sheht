@@ -1,8 +1,71 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 
 import { Button } from "../components/ui/Button";
 
-const page = () => {
+interface OrderForm {
+  customer_name: string;
+  phone_number: string;
+  car_brand: string;
+  car_model: string;
+  car_description: string;
+}
+
+const Page = () => {
+  const [formData, setFormData] = useState<OrderForm>({
+    customer_name: "",
+    phone_number: "",
+    car_brand: "",
+    car_model: "",
+    car_description: "",
+  });
+
+  const [message, setMessage] = useState("");
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setMessage("");
+
+    try {
+      const response = await fetch("/api/form", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setMessage("✅ تم إرسال طلبك بنجاح! سنتواصل معك قريباً.");
+        // إعادة تعيين النموذج
+        setFormData({
+          customer_name: "",
+          phone_number: "",
+          car_brand: "",
+          car_model: "",
+          car_description: "",
+        });
+      } else {
+        setMessage(`❌ ${result.error || "حدث خطأ أثناء الإرسال"}`);
+      }
+    } catch (error) {
+      setMessage("❌ حدث خطأ في الشبكة. حاول مرة أخرى.");
+      console.error(error);
+    } finally {
+    }
+  };
   return (
     <div
       className="relative min-h-[100vh] mt-[2%] px-[8%] flex flex-col items-center gap-4  "
@@ -20,47 +83,83 @@ const page = () => {
       </div>
 
       {/**form inputs */}
-      <div className="flex flex-col md:grid grid-cols-1 md:grid-cols-2 w-full gap-4">
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col md:grid grid-cols-1 md:grid-cols-2 w-full gap-4"
+      >
         <div className="flex flex-col items-start w-full gap-2">
           <label>الاســــــــم :</label>
           <input
+            name="customer_name"
+            value={formData.customer_name}
+            onChange={handleInputChange}
+            required
             className="font-medium border-[1px] w-full border-[#000000] p-4 placeholder:font-medium rounded-[8px]"
             placeholder="ادخل الاسم بالكامل هنا.."
-          ></input>
+          />
         </div>
         <div className="flex flex-col items-start w-full gap-2">
           <label> رقم الهاتف (اتصال & واتساب ) :</label>
           <input
+            name="phone_number"
+            value={formData.phone_number}
+            onChange={handleInputChange}
+            required
+            type="tel"
             className="font-medium border-[1px] w-full border-[#000000] p-4 placeholder:font-medium rounded-[8px]"
             placeholder="01234567890"
-          ></input>
+          />
         </div>
         <div className="flex flex-col items-start w-full gap-2">
           <label> ماركة السيارة :</label>
           <input
-            className=" font-medium border-[1px] w-full border-[#000000] p-4 placeholder:font-medium rounded-[8px]"
+            name="car_brand"
+            value={formData.car_brand}
+            onChange={handleInputChange}
+            required
+            className="font-medium border-[1px] w-full border-[#000000] p-4 placeholder:font-medium rounded-[8px]"
             placeholder="مثال : مرسيدس"
-          ></input>
+          />
         </div>
         <div className="flex flex-col items-start w-full gap-2">
           <label> موديل السيارة :</label>
           <input
-            className=" font-medium border-[1px] w-full border-[#000000] p-4 placeholder:font-medium rounded-[8px]"
+            name="car_model"
+            value={formData.car_model}
+            onChange={handleInputChange}
+            required
+            className="font-medium border-[1px] w-full border-[#000000] p-4 placeholder:font-medium rounded-[8px]"
             placeholder="مثال : GLC أو جى ال سى"
-          ></input>
+          />
         </div>
         <div className="flex flex-col items-start w-full gap-2 col-span-2">
           <label> وصف الطلب :</label>
           <textarea
-            className="border-[1px] w-full border-[#000000] font-medium p-8 placeholder:font-medium rounded-[8px]"
+            name="car_description"
+            value={formData.car_description}
+            onChange={handleInputChange}
+            className="border-[1px] w-full border-[#000000] font-medium p-8 placeholder:font-medium rounded-[8px] min-h-[120px]"
             placeholder="اكتب سنة التصنيع , اللون , الفئة و كل المواصفات الأخرى.."
           />
         </div>
-      </div>
+        <Button type="submit" kind="secondary">
+          اطلب سيارتك الآن!
+        </Button>
+      </form>
+      {message && (
+        <div
+          className={`col-span-2 p-4 rounded-lg text-center ${
+            message.includes("✅")
+              ? "bg-green-100 text-green-800"
+              : "bg-red-100 text-red-800"
+          }`}
+        >
+          {message}
+        </div>
+      )}
       {/**button */}
-      <Button kind="secondary">اطلب سيارتك الآن!</Button>
     </div>
   );
 };
 
-export default page;
+export default Page;

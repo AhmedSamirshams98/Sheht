@@ -40,6 +40,21 @@ async function initializeTables() {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
+    await client.query(`
+      CREATE TABLE car_orders (
+    id SERIAL PRIMARY KEY,
+    customer_name VARCHAR(255) NOT NULL,
+    phone_number VARCHAR(20) NOT NULL,
+    car_brand VARCHAR(100) NOT NULL,
+    car_model VARCHAR(100) NOT NULL,
+    car_description TEXT,
+    status VARCHAR(50) DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+      
+      
+      `);
 
     console.log("Tables checked/created successfully");
   } catch (error) {
