@@ -21,7 +21,7 @@ const Nav = () => {
   }, []);
   return (
     <div
-      className="fixed text-white z-[100] backdrop-blur-md  px-[6%] py-[2%] w-full  "
+      className="fixed  text-white z-[100] backdrop-blur-md  px-[6%] py-[2%] w-full  "
       style={{ direction: "rtl" }}
     >
       {isMobile ? <MobileNav /> : <DesktopNav />}

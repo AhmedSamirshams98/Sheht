@@ -1,16 +1,17 @@
 import Image from "next/image";
 import React from "react";
 import order from "../../public/images/order.svg";
-import { Button } from "antd";
+import { Button } from "./ui/Button";
 
 const HomeHowtoOrder = () => {
   return (
-    <div className="flex  flex-col items-center  justify-center gap-6 w-full">
+    <div className="flex  flex-col items-center p-4  justify-center gap-6 w-full">
+      <h1 className="text-[4vw] md:text-[2.5vw]">
+        كيف يمكنك طلب سيارتك المخصصة؟
+      </h1>
       <Image src={order} alt="كيف تطلب سيارتك من شحتة للتجاره" />
-      {/* <button className=" text-black bg-[#FDB800] drop-shadow-[#00000040] rounded-[42.5px]">
-        ! اطلب سيارتك الآن
-      </button> */}
-      <Button>! اطلب سيارتك الآن</Button>
+
+      <Button kind="secondary">! اطلب سيارتك الآن</Button>
     </div>
   );
 };

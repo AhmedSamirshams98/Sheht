@@ -6,7 +6,7 @@ import { Button } from "./ui/Button";
 
 const HomeFirst = () => {
   return (
-    <div className="w-screen  relative  " style={{ direction: "rtl" }}>
+    <div className="w-screen  relative    " style={{ direction: "rtl" }}>
       <Image
         className="w-full  object-cover max-h-[100vh]"
         src={backgroundimage}

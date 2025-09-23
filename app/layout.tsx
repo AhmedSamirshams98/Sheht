@@ -19,7 +19,11 @@ export default function RootLayout({
     <html lang="en">
       <body className="font-graphic">
         <Nav />
-        {children}
+        <main className="relative top-0">
+          {" "}
+          {/* إضافة padding-top */}
+          {children}
+        </main>
         <Footer />
       </body>
     </html>
