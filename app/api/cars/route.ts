@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import pool from "../../lib/db";
 import { handleFileUpload } from "@/app/lib/upload";
+import { initDatabase } from "@/app/lib/init-db";
 interface Car {
   id: number;
   brand: string;
@@ -13,66 +14,14 @@ interface Car {
   images: string[];
 }
 
-// دالة لإنشاء الجداول إذا لم تكن موجودة
-async function initializeTables() {
-  const client = await pool.connect();
-  try {
-    // إنشاء جدول cars إذا لم يكن موجوداً
-    await client.query(`
-      CREATE TABLE IF NOT EXISTS cars (
-        id SERIAL PRIMARY KEY,
-        brand VARCHAR(100) NOT NULL,
-        model VARCHAR(100) NOT NULL,
-        description TEXT,
-        kilometers INTEGER,
-        status VARCHAR(50) DEFAULT 'available',
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-
-    // إنشاء جدول car_images إذا لم يكن موجوداً
-    await client.query(`
-      CREATE TABLE IF NOT EXISTS car_images (
-        id SERIAL PRIMARY KEY,
-        car_id INTEGER REFERENCES cars(id) ON DELETE CASCADE,
-        image_url VARCHAR(500) NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-    await client.query(`
-      CREATE TABLE car_orders (
-    id SERIAL PRIMARY KEY,
-    customer_name VARCHAR(255) NOT NULL,
-    phone_number VARCHAR(20) NOT NULL,
-    car_brand VARCHAR(100) NOT NULL,
-    car_model VARCHAR(100) NOT NULL,
-    car_description TEXT,
-    status VARCHAR(50) DEFAULT 'pending',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-      
-      
-      `);
-
-    console.log("Tables checked/created successfully");
-  } catch (error) {
-    console.error("Error creating tables:", error);
-    throw error;
-  } finally {
-    client.release();
-  }
-}
-
-// متغير لتتبع إذا كانت الجداول قد تم تهيئتها
+initDatabase();
 let tablesInitialized = false;
 
 export async function GET() {
   try {
     // تهيئة الجداول إذا لم تكن متهيئة من قبل
     if (!tablesInitialized) {
-      await initializeTables();
+      await initDatabase();
       tablesInitialized = true;
     }
 
@@ -99,7 +48,7 @@ export async function POST(request: NextRequest) {
   try {
     // تهيئة الجداول إذا لم تكن متهيئة من قبل
     if (!tablesInitialized) {
-      await initializeTables();
+      await initDatabase();
       tablesInitialized = true;
     }
 

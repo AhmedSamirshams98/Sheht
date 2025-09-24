@@ -29,6 +29,18 @@ export async function initDatabase() {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        google_id TEXT UNIQUE,
+        email TEXT UNIQUE NOT NULL,
+        name TEXT,
+        picture TEXT,
+        role TEXT DEFAULT 'user',
+        created_at TIMESTAMP DEFAULT now(),
+        updated_at TIMESTAMP DEFAULT now()
+      )
+    `);
 
     console.log("Tables initialized successfully");
   } catch (error) {
