@@ -1,8 +1,8 @@
 import React from "react";
-import backgroundimage from "../../public/images/backgroundimage.png";
+import backgroundimage from "../../../public/images/backgroundimage.png";
 import Image from "next/image";
-import "../globals.css";
-import { Button } from "./ui/Button";
+import "../../../app/components/styles/globals.css";
+import { Button } from "../ui/Button";
 import Link from "next/link";
 
 const HomeFirst = () => {

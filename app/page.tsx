@@ -1,9 +1,10 @@
 import React from "react";
-import HomeFirst from "./components/HomeFirst";
-import HomeMarque from "./components/HomeMarque";
-import HomeAbout from "./components/HomeAbout";
-import HomeHowtoOrder from "./components/HomeHowtoOrder";
-import HomeCars from "./components/HomeCars";
+import HomeFirst from "./components/HomeComponents/HomeFirst";
+import HomeMarque from "./components/HomeComponents/HomeMarque";
+import HomeAbout from "./components/HomeComponents/HomeAbout";
+import HomeCars from "./components/HomeComponents/HomeCars";
+import HomeHowtoOrder from "./components/HomeComponents/HomeHowtoOrder";
+
 
 const page = () => {
   return (

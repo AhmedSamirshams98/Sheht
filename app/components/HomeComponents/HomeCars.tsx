@@ -1,17 +1,18 @@
 import React from "react";
-import EmblaCarousel from "./emblaCarousel/EmblaCarousel";
+
 import Image from "next/image";
-import shehta1 from "../../public/images/shehta1.png";
-import shehta2 from "../../public/images/shehta2.png";
-import shehta3 from "../../public/images/shehta3.png";
-import shehta4 from "../../public/images/shehta4.png";
-import shehta5 from "../../public/images/shehta5.png";
-import shehta6 from "../../public/images/shehta6.png";
-import shehta7 from "../../public/images/shehta7.png";
-import shehta8 from "../../public/images/shehta8.png";
-import shehta9 from "../../public/images/shehta9.png";
-import "./emblaCarousel/emblaCarousel.css";
-import { Button } from "./ui/Button";
+import shehta1 from "../../../public/images/shehta1.png";
+import shehta2 from "../../../public/images/shehta2.png";
+import shehta3 from "../../../public/images/shehta3.png";
+import shehta4 from "../../../public/images/shehta4.png";
+import shehta5 from "../../../public/images/shehta5.png";
+import shehta6 from "../../../public/images/shehta6.png";
+import shehta7 from "../../../public/images/shehta7.png";
+import shehta8 from "../../../public/images/shehta8.png";
+import shehta9 from "../../../public/images/shehta9.png";
+import "../emblaCarousel/emblaCarousel.css";
+import { Button } from "../ui/Button";
+import EmblaCarousel from "../emblaCarousel/EmblaCarousel";
 
 const HomeCars = () => {
   const carsData = [

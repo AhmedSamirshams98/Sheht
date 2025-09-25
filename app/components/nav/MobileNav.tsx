@@ -1,6 +1,6 @@
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
-import shehtalogo from "../../public/images/shehtalogo.png";
+import shehtalogo from "../../../public/images/shehtalogo.png";
 import { RiCloseLine, RiMenu2Fill } from "react-icons/ri";
 import { navLinks } from "@/data/constants";
 import Link from "next/link";

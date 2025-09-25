@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import "./globals.css";
+import "../app/components/styles/globals.css";
 
-import "../app/fonts.css";
-import Nav from "./nav/Nav";
-import Footer from "./Footer";
+import "../app/components/styles/fonts.css"
+import Nav from "./components/nav/Nav";
+import { Footer } from "antd/es/layout/layout";
 
 export const metadata: Metadata = {
   title: "Shehta Project ",

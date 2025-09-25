@@ -1,8 +1,8 @@
 import Image from "next/image";
 import React from "react";
-import order from "../../public/images/order.svg";
-import { Button } from "./ui/Button";
+import order from "../../../public/images/order.svg";
 import Link from "next/link";
+import { Button } from "../ui/Button";
 
 const HomeHowtoOrder = () => {
   return (

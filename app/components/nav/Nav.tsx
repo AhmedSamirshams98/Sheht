@@ -2,7 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import DesktopNav from "./DesktopNav";
 import MobileNav from "./MobileNav";
-import backgroundimage from "../../public/images/backgroundimage.png";
+import backgroundimage from "../../../public/images/backgroundimage.png";
 import { usePathname } from "next/navigation";
 
 const Nav = () => {

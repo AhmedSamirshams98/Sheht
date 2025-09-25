@@ -1,13 +1,14 @@
 "use client";
 import React from "react";
-import logo from "../public/images/shehtalogo.png";
 import Image from "next/image";
-import phone from "../public/images/phonenumber.svg";
-import whatsapp from "../public/images/whatsapp.svg";
-import youtube from "../public/images/youtube.svg";
-import instagram from "../public/images/instagram.svg";
-import tiktok from "../public/images/tiktok.svg";
-import facebook from "../public/images/facebook.svg";
+
+import logo from "../../public/images/shehtalogo.png";
+import phone from "../../public/images/phonenumber.svg";
+import whatsapp from "../../public/images/whatsapp.svg";
+import youtube from "../../public/images/youtube.svg";
+import instagram from "../../public/images/instagram.svg";
+import tiktok from "../../public/images/tiktok.svg";
+import facebook from "../../public/images/facebook.svg";
 import { Button } from "antd";
 import Link from "next/link";
 

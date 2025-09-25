@@ -1,8 +1,8 @@
 import React from "react";
 import Marquee from "react-fast-marquee";
-import marque1 from "../../public/images/marque1.png";
-import marque2 from "../../public/images/marque2.png";
-import marque3 from "../../public/images/marque3.png";
+import marque1 from "../../../public/images/marque1.png";
+import marque2 from "../../../public/images/marque2.png";
+import marque3 from "../../../public/images/marque3.png";
 import Image from "next/image";
 
 const HomeMarque = () => {

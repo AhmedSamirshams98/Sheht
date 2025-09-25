@@ -1,5 +1,5 @@
 import React from "react";
-import shehtalogo from "../../public/images/shehtalogo.png";
+import shehtalogo from "../../../public/images/shehtalogo.png";
 import Image from "next/image";
 import { navLinks } from "@/data/constants";
 import Link from "next/link";
