@@ -37,6 +37,8 @@ export default function Dashboard() {
   const [message, setMessage] = useState("");
   const [user, setUser] = useState<User | null>(null);
   const [sessionLoading, setSessionLoading] = useState(true);
+  const [editingCar, setEditingCar] = useState<Car | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
 
   const [formData, setFormData] = useState<CarFormData>({
     brand: "",
@@ -48,15 +50,22 @@ export default function Dashboard() {
     imageUrls: [],
   });
 
+  const [editFormData, setEditFormData] = useState<CarFormData>({
+    brand: "",
+    model: "",
+    description: "",
+    kilometers: 0,
+    status: "available",
+    imageFiles: [],
+    imageUrls: [],
+  });
+
   // جلب بيانات الجلسة والتحقق من الصلاحيات
-  // في dashboard.tsx - تحسين fetchSession
   const fetchSession = async () => {
     try {
       setSessionLoading(true);
-
-      // إضافة credentials لضمان إرسال الكوكيز
       const res = await fetch("/api/auth/me", {
-        credentials: "include", // هذا مهم جداً
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
@@ -239,35 +248,63 @@ export default function Dashboard() {
     if (!files || files.length === 0) return;
 
     const newImages = Array.from(files);
-    setFormData((prev) => ({
-      ...prev,
-      imageFiles: [...prev.imageFiles, ...newImages],
-    }));
+    if (isEditing) {
+      setEditFormData((prev) => ({
+        ...prev,
+        imageFiles: [...prev.imageFiles, ...newImages],
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        imageFiles: [...prev.imageFiles, ...newImages],
+      }));
+    }
   };
 
   // دالة حذف صورة
   const removeImage = (index: number, type: "files" | "urls") => {
-    setFormData((prev) => {
-      if (type === "files") {
-        const updatedFiles = [...prev.imageFiles];
-        updatedFiles.splice(index, 1);
-        return { ...prev, imageFiles: updatedFiles };
-      } else {
-        const updatedUrls = [...prev.imageUrls];
-        updatedUrls.splice(index, 1);
-        return { ...prev, imageUrls: updatedUrls };
-      }
-    });
+    if (isEditing) {
+      setEditFormData((prev) => {
+        if (type === "files") {
+          const updatedFiles = [...prev.imageFiles];
+          updatedFiles.splice(index, 1);
+          return { ...prev, imageFiles: updatedFiles };
+        } else {
+          const updatedUrls = [...prev.imageUrls];
+          updatedUrls.splice(index, 1);
+          return { ...prev, imageUrls: updatedUrls };
+        }
+      });
+    } else {
+      setFormData((prev) => {
+        if (type === "files") {
+          const updatedFiles = [...prev.imageFiles];
+          updatedFiles.splice(index, 1);
+          return { ...prev, imageFiles: updatedFiles };
+        } else {
+          const updatedUrls = [...prev.imageUrls];
+          updatedUrls.splice(index, 1);
+          return { ...prev, imageUrls: updatedUrls };
+        }
+      });
+    }
   };
 
   // دالة إضافة رابط صورة يدوياً
   const addImageUrl = () => {
     const url = prompt("أدخل رابط الصورة:");
     if (url && url.trim() !== "") {
-      setFormData((prev) => ({
-        ...prev,
-        imageUrls: [...prev.imageUrls, url.trim()],
-      }));
+      if (isEditing) {
+        setEditFormData((prev) => ({
+          ...prev,
+          imageUrls: [...prev.imageUrls, url.trim()],
+        }));
+      } else {
+        setFormData((prev) => ({
+          ...prev,
+          imageUrls: [...prev.imageUrls, url.trim()],
+        }));
+      }
     }
   };
 
@@ -291,8 +328,18 @@ export default function Dashboard() {
         setCars(cars.filter((car) => car.id !== carId));
         setMessage("تم حذف السيارة بنجاح");
       } else {
-        const errorData = await response.json();
-        setMessage(`فشل في حذف السيارة: ${errorData.error}`);
+        // اقرأ البودي مرة واحدة
+        const body = await response.text();
+
+        let errorMessage = "فشل في حذف السيارة";
+        try {
+          const data = JSON.parse(body);
+          if (data.error) errorMessage = data.error;
+        } catch {
+          if (body) errorMessage = body;
+        }
+
+        setMessage(`فشل في حذف السيارة: ${errorMessage}`);
       }
     } catch (error) {
       console.error("Error deleting car:", error);
@@ -300,7 +347,103 @@ export default function Dashboard() {
     }
   };
 
-  // عرض تحميل أثناء جلب بيانات الجلسة
+  // بدء التعديل على سيارة
+  const startEdit = (car: Car) => {
+    setEditingCar(car);
+    setIsEditing(true);
+    setEditFormData({
+      brand: car.brand,
+      model: car.model,
+      description: car.description,
+      kilometers: car.kilometers,
+      status: car.status,
+      imageFiles: [],
+      imageUrls: [...car.images],
+    });
+  };
+
+  // إلغاء التعديل
+  const cancelEdit = () => {
+    setEditingCar(null);
+    setIsEditing(false);
+    setEditFormData({
+      brand: "",
+      model: "",
+      description: "",
+      kilometers: 0,
+      status: "available",
+      imageFiles: [],
+      imageUrls: [],
+    });
+  };
+
+  // حفظ التعديلات
+  const handleEditSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!user || user.role !== "admin" || !editingCar) {
+      setMessage("ليس لديك صلاحية لتعديل السيارات");
+      return;
+    }
+
+    setLoading(true);
+    setMessage("");
+
+    try {
+      let uploadedImageUrls: string[] = [...editFormData.imageUrls];
+
+      // تحميل الصور الجديدة إذا وجدت
+      if (editFormData.imageFiles.length > 0) {
+        const newUrls = await uploadImages(editFormData.imageFiles);
+        uploadedImageUrls = [...uploadedImageUrls, ...newUrls];
+
+        if (newUrls.length === 0 && editFormData.imageFiles.length > 0) {
+          throw new Error("فشل في تحميل الصور");
+        }
+      }
+
+      const response = await fetch(`/api/cars/${editingCar.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          brand: editFormData.brand,
+          model: editFormData.model,
+          description: editFormData.description,
+          kilometers: editFormData.kilometers,
+          status: editFormData.status,
+          images: uploadedImageUrls,
+        }),
+      });
+
+      if (response.ok) {
+        const updatedCar = await response.json();
+
+        // تحديث القائمة المحلية
+        setCars(
+          cars.map((car) => (car.id === editingCar.id ? updatedCar : car))
+        );
+
+        setMessage("تم تعديل السيارة بنجاح!");
+        cancelEdit(); // إغلاق وضع التعديل
+      } else {
+        const errorData = await response.json();
+        setMessage(
+          `فشل في تعديل السيارة: ${errorData.error || "خطأ غير معروف"}`
+        );
+      }
+    } catch (error) {
+      console.error("Error updating car:", error);
+      setMessage(
+        error instanceof Error ? error.message : "حدث خطأ في الاتصال بالخادم"
+      );
+    } finally {
+      setLoading(false);
+      setTimeout(() => setMessage(""), 5000);
+    }
+  };
+
   if (sessionLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
@@ -383,7 +526,6 @@ export default function Dashboard() {
     );
   }
 
-  // إذا كان المستخدم admin - عرض لوحة التحكم
   return (
     <div className="min-h-screen bg-gray-50">
       {/* الهيدر */}
@@ -532,13 +674,18 @@ export default function Dashboard() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* نموذج إضافة سيارة */}
+          {/* نموذج إضافة/تعديل سيارة */}
           <div className="bg-white p-6 rounded-lg shadow-sm border">
             <h2 className="text-xl font-semibold mb-4 text-gray-800">
-              إضافة سيارة جديدة
+              {isEditing
+                ? `تعديل السيارة: ${editingCar?.brand} ${editingCar?.model}`
+                : "إضافة سيارة جديدة"}
             </h2>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form
+              onSubmit={isEditing ? handleEditSubmit : handleSubmit}
+              className="space-y-4"
+            >
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-2 text-gray-700">
@@ -547,9 +694,14 @@ export default function Dashboard() {
                   <input
                     type="text"
                     required
-                    value={formData.brand}
+                    value={isEditing ? editFormData.brand : formData.brand}
                     onChange={(e) =>
-                      setFormData({ ...formData, brand: e.target.value })
+                      isEditing
+                        ? setEditFormData({
+                            ...editFormData,
+                            brand: e.target.value,
+                          })
+                        : setFormData({ ...formData, brand: e.target.value })
                     }
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="أدخل الماركة"
@@ -563,9 +715,14 @@ export default function Dashboard() {
                   <input
                     type="text"
                     required
-                    value={formData.model}
+                    value={isEditing ? editFormData.model : formData.model}
                     onChange={(e) =>
-                      setFormData({ ...formData, model: e.target.value })
+                      isEditing
+                        ? setEditFormData({
+                            ...editFormData,
+                            model: e.target.value,
+                          })
+                        : setFormData({ ...formData, model: e.target.value })
                     }
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="أدخل الموديل"
@@ -578,9 +735,19 @@ export default function Dashboard() {
                   الوصف
                 </label>
                 <textarea
-                  value={formData.description}
+                  value={
+                    isEditing ? editFormData.description : formData.description
+                  }
                   onChange={(e) =>
-                    setFormData({ ...formData, description: e.target.value })
+                    isEditing
+                      ? setEditFormData({
+                          ...editFormData,
+                          description: e.target.value,
+                        })
+                      : setFormData({
+                          ...formData,
+                          description: e.target.value,
+                        })
                   }
                   className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   rows={3}
@@ -595,12 +762,19 @@ export default function Dashboard() {
                   </label>
                   <input
                     type="number"
-                    value={formData.kilometers}
+                    value={
+                      isEditing ? editFormData.kilometers : formData.kilometers
+                    }
                     onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        kilometers: parseInt(e.target.value) || 0,
-                      })
+                      isEditing
+                        ? setEditFormData({
+                            ...editFormData,
+                            kilometers: parseInt(e.target.value) || 0,
+                          })
+                        : setFormData({
+                            ...formData,
+                            kilometers: parseInt(e.target.value) || 0,
+                          })
                     }
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     placeholder="أدخل عدد الكيلومترات"
@@ -612,9 +786,14 @@ export default function Dashboard() {
                     الحالة
                   </label>
                   <select
-                    value={formData.status}
+                    value={isEditing ? editFormData.status : formData.status}
                     onChange={(e) =>
-                      setFormData({ ...formData, status: e.target.value })
+                      isEditing
+                        ? setEditFormData({
+                            ...editFormData,
+                            status: e.target.value,
+                          })
+                        : setFormData({ ...formData, status: e.target.value })
                     }
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   >
@@ -654,13 +833,17 @@ export default function Dashboard() {
                   </button>
                 </div>
 
-                {formData.imageFiles.length > 0 && (
+                {(isEditing ? editFormData.imageFiles : formData.imageFiles)
+                  .length > 0 && (
                   <div className="mt-4">
                     <p className="text-sm mb-2 text-gray-600">
                       الملفات المرفوعة:
                     </p>
                     <div className="space-y-2">
-                      {formData.imageFiles.map((file, index) => (
+                      {(isEditing
+                        ? editFormData.imageFiles
+                        : formData.imageFiles
+                      ).map((file, index) => (
                         <div
                           key={index}
                           className="flex items-center justify-between bg-gray-50 p-3 rounded-lg"
@@ -690,11 +873,15 @@ export default function Dashboard() {
                   </div>
                 )}
 
-                {formData.imageUrls.length > 0 && (
+                {(isEditing ? editFormData.imageUrls : formData.imageUrls)
+                  .length > 0 && (
                   <div className="mt-4">
                     <p className="text-sm mb-2 text-gray-600">روابط الصور:</p>
                     <div className="space-y-2">
-                      {formData.imageUrls.map((url, index) => (
+                      {(isEditing
+                        ? editFormData.imageUrls
+                        : formData.imageUrls
+                      ).map((url, index) => (
                         <div
                           key={index}
                           className="flex items-center justify-between bg-gray-50 p-3 rounded-lg"
@@ -716,13 +903,29 @@ export default function Dashboard() {
                 )}
               </div>
 
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-green-500 text-white py-3 px-4 rounded-lg hover:bg-green-600 disabled:opacity-50 transition duration-200 font-medium"
-              >
-                {loading ? "جاري الإضافة..." : "إضافة السيارة"}
-              </button>
+              <div className="flex gap-3">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="flex-1 bg-green-500 text-white py-3 px-4 rounded-lg hover:bg-green-600 disabled:opacity-50 transition duration-200 font-medium"
+                >
+                  {loading
+                    ? "جاري الحفظ..."
+                    : isEditing
+                    ? "حفظ التعديلات"
+                    : "إضافة السيارة"}
+                </button>
+
+                {isEditing && (
+                  <button
+                    type="button"
+                    onClick={cancelEdit}
+                    className="bg-gray-500 text-white py-3 px-4 rounded-lg hover:bg-gray-600 transition duration-200 font-medium"
+                  >
+                    إلغاء
+                  </button>
+                )}
+              </div>
             </form>
           </div>
 
@@ -798,6 +1001,12 @@ export default function Dashboard() {
                                 d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                               />
                             </svg>
+                          </button>
+                          <button
+                            onClick={() => startEdit(car)}
+                            className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                          >
+                            تعديل
                           </button>
                         </div>
                         <p className="text-gray-600 mb-2">{car.description}</p>
