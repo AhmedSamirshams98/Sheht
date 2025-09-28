@@ -1,54 +1,151 @@
 import { NextRequest, NextResponse } from "next/server";
-import pool from "../../../lib/db";
-
+import { prisma } from "@/lib/prisma";
+import { CarResponse, CreateCarInput } from "../../../../types/car";
 export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
     const carId = parseInt(params.id);
-    const { brand, model, description, kilometers, status, images } =
-      await request.json();
 
-    // تحديث بيانات السيارة في قاعدة البيانات
-    const result = await pool.query(
-      `UPDATE cars SET brand = $1, model = $2, description = $3, kilometers = $4, status = $5, updated_at = NOW() 
-         WHERE id = $6 RETURNING *`,
-      [brand, model, description, kilometers, status, carId]
-    );
+    const existingCar = await prisma.car.findUnique({
+      where: { id: carId },
+    });
 
-    if (result.rows.length === 0) {
+    if (!existingCar) {
       return NextResponse.json({ error: "Car not found" }, { status: 404 });
     }
 
-    // تحديث الصور (حذف القديمة وإضافة الجديدة)
-    await pool.query("DELETE FROM car_images WHERE car_id = $1", [carId]);
+    const contentType = request.headers.get("content-type") || "";
+    let brand = "";
+    let model = "";
+    let description: string | null = null;
+    let kilometers: number | null = null;
+    let status = "available";
+    let images: string[] = [];
 
-    if (images && images.length > 0) {
-      for (const imageUrl of images) {
-        await pool.query(
-          "INSERT INTO car_images (car_id, image_url) VALUES ($1, $2)",
-          [carId, imageUrl]
-        );
+    if (contentType.includes("multipart/form-data")) {
+      const formData = await request.formData();
+
+      brand = (formData.get("brand") as string) || "";
+      model = (formData.get("model") as string) || "";
+      description = (formData.get("description") as string) || null;
+      kilometers = parseInt(formData.get("kilometers") as string) || null;
+      status = (formData.get("status") as string) || "available";
+
+      const imageFiles = formData.getAll("images") as File[];
+      if (imageFiles.length > 0) {
+        const { handleFileUpload } = await import("../../../lib/upload");
+        images = await handleFileUpload(formData);
       }
+    } else {
+      const jsonData: CreateCarInput & { images?: string[] } =
+        await request.json();
+
+      ({
+        brand = "",
+        model = "",
+        description = null,
+        kilometers = null,
+        status = "available",
+        images = [],
+      } = jsonData);
     }
 
-    // جلب السيارة المحدثة مع صورها
-    const finalResult = await pool.query(
-      `SELECT cars.*, 
-                COALESCE(array_agg(car_images.image_url) FILTER (WHERE car_images.image_url IS NOT NULL), '{}') as images 
-         FROM cars 
-         LEFT JOIN car_images ON cars.id = car_images.car_id 
-         WHERE cars.id = $1 
-         GROUP BY cars.id`,
-      [carId]
-    );
+    // هنا النوع بتاع tx بيتحدد تلقائيًا كـ Prisma.TransactionClient
+    const result = await prisma.$transaction(async (tx) => {
+      const updatedCar = await tx.car.update({
+        where: { id: carId },
+        data: {
+          brand,
+          model,
+          description,
+          kilometers,
+          status,
+          updated_at: new Date(),
+        },
+      });
 
-    return NextResponse.json(finalResult.rows[0]);
+      await tx.carImage.deleteMany({ where: { car_id: carId } });
+
+      if (images.length > 0) {
+        await tx.carImage.createMany({
+          data: images.map((imageUrl) => ({
+            car_id: carId,
+            image_url: imageUrl,
+          })),
+        });
+      }
+
+      return tx.car.findUnique({
+        where: { id: carId },
+        include: { images: { select: { image_url: true } } },
+      });
+    });
+
+    if (!result) {
+      throw new Error("Failed to update car");
+    }
+
+    const formattedCar: CarResponse = {
+      id: result.id,
+      brand: result.brand,
+      model: result.model,
+      description: result.description,
+      kilometers: result.kilometers,
+      status: result.status,
+      created_at: result.created_at.toISOString(),
+      updated_at: result.updated_at.toISOString(),
+      images: result.images.map((img) => img.image_url), // img معروف هنا
+    };
+
+    return NextResponse.json(formattedCar);
   } catch (error) {
     console.error("Error updating car:", error);
     return NextResponse.json(
       { error: "Failed to update car" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const carId = parseInt(params.id);
+
+    // التحقق من وجود السيارة
+    const existingCar = await prisma.car.findUnique({
+      where: { id: carId },
+    });
+
+    if (!existingCar) {
+      return NextResponse.json({ error: "Car not found" }, { status: 404 });
+    }
+
+    // استخدام transaction للحذف (بسبب العلاقات)
+    await prisma.$transaction(async (tx) => {
+      // حذف الصور المرتبطة أولاً (بسبب foreign key constraint)
+      await tx.carImage.deleteMany({
+        where: { car_id: carId },
+      });
+
+      // ثم حذف السيارة
+      await tx.car.delete({
+        where: { id: carId },
+      });
+    });
+
+    return NextResponse.json(
+      { message: "Car deleted successfully" },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error deleting car:", error);
+    return NextResponse.json(
+      { error: "Failed to delete car" },
       { status: 500 }
     );
   }

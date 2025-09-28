@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+
+
 @layer base {
   .font-graphic {
     font-family: "GraphikArabic", sans-serif;

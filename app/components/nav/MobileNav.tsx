@@ -14,17 +14,12 @@ const MobileNav = () => {
     if (isMenuOpen) {
       setIsVisible(true);
       setTimeout(() => setIsAnimating(true), 10);
-      document.body.style.overflow = "hidden"; // منع التمرير عند فتح القائمة
     } else {
-      // بدء animation الإخفاء
       setIsAnimating(false);
-      // إخفاء القائمة بعد انتهاء animation
       const timer = setTimeout(() => setIsVisible(false), 300);
-      document.body.style.overflow = "unset"; // إعادة التمرير
       return () => clearTimeout(timer);
     }
   }, [isMenuOpen]);
-
   const closeMenu = () => {
     setIsMenuOpen(false);
   };
@@ -34,49 +29,41 @@ const MobileNav = () => {
   };
 
   return (
-    <div className="flex flex-row justify-between   w-full">
-      <div className="flex flex-row items-center gap-2">
-        <Link href="/">
+    <div className="flex flex-row items-center justify-between w-full backdrop:backdrop-blur-3xl p-2">
+      <div className="flex flex-row justify-between w-full bg-gradient-to-r from-[#3B260680] to-[#3B260680]/50 rounded-[42px]">
+        <Link className="flex flex-row gap-1 items-center z-[60]" href="/">
           <Image
-            className="w-[10vw]"
+            className="w-[40px] h-[40px] object-cover"
             src={shehtalogo}
             alt="shehtatraidingcars شحتة للتجارة"
           />
-          <h1 className="font-bold text-[4vw]">شحتة للتجارة</h1>
+          <h1 className="font-bold text-[0.8em] md:text-[1.2em] ">
+            شحتة للتجارة
+          </h1>
         </Link>
+
+        <button
+          onClick={toggleMenu}
+          className="text-2xl p-2 z-[60]"
+          aria-label={isMenuOpen ? "إغلاق القائمة" : "فتح القائمة"}
+        >
+          {isMenuOpen ? <RiCloseLine /> : <RiMenu2Fill />}
+        </button>
       </div>
-
-      <button
-        onClick={toggleMenu}
-        className="text-2xl p-2"
-        aria-label={isMenuOpen ? "إغلاق القائمة" : "فتح القائمة"}
-      >
-        {isMenuOpen ? <RiCloseLine /> : <RiMenu2Fill />}
-      </button>
-
-      {/* Overlay مع animation */}
+      {/* القائمة الجانبية */}
       {isVisible && (
         <div
-          className={`fixed  z-50 bg-black transition-opacity duration-300 ease-in-out ${
-            isAnimating ? "opacity-50" : "opacity-0"
-          }`}
-          onClick={closeMenu}
-        />
-      )}
-
-      {isVisible && (
-        <div
-          className={`fixed h-[40vh] w-[86%]  top-12 rounded-[10px] bg-[#FDB800]/100 backdrop-blur-lg z-50 transform transition-transform duration-300 ease-in-out ${
-            isAnimating ? "translate-x-0" : "translate-x-full"
+          className={`fixed top-0 right-0 w-full h-full bg-[#00000081] backdrop-blur-lg z-50 transition-opacity ease-in-out duration-300 ${
+            isMenuOpen ? "opacity-100" : "opacity-0"
           }`}
           onClick={(e) => e.stopPropagation()}
         >
-          <nav className="p-4" dir="rtl">
+          <nav className="p-4 mt-[20%]" dir="rtl">
             {navLinks.map((link) => (
               <Link
                 key={link.id}
                 href={link.path}
-                className={`block py-3 text-black text-[6vw] hover:bg-gray-100 rounded px-2 transition-all duration-200 ${
+                className={`block py-3 text-white text-[6vw] rounded px-2 transition-all duration-300 ${
                   isAnimating
                     ? "opacity-100 translate-x-0"
                     : "opacity-0 translate-x-4"

@@ -1,139 +1,141 @@
 import { NextRequest, NextResponse } from "next/server";
-import pool from "../../lib/db";
-import { handleFileUpload } from "@/app/lib/upload";
-import { initDatabase } from "@/app/lib/init-db";
-interface Car {
-  id: number;
-  brand: string;
-  model: string;
-  description: string | null;
-  kilometers: number | null;
-  status: string;
-  created_at: Date;
-  updated_at: Date;
-  images: string[];
-}
+import prisma from "@/lib/prisma"; // تأكد من الاستيراد كـ default
+import { handleFileUpload } from "@/lib/upload";
+import { CarResponse, CreateCarInput } from "@/types/car";
 
-initDatabase();
-let tablesInitialized = false;
-
-export async function GET() {
+export async function GET(): Promise<NextResponse> {
   try {
-    // تهيئة الجداول إذا لم تكن متهيئة من قبل
-    if (!tablesInitialized) {
-      await initDatabase();
-      tablesInitialized = true;
-    }
+    // استخدم prisma.cars بدلاً من prisma.car
+    const cars = await prisma.cars.findMany({
+      include: {
+        car_images: { // استخدم car_images بدلاً من images
+          select: {
+            image_url: true,
+          },
+        },
+      },
+      orderBy: {
+        created_at: "desc",
+      },
+    });
 
-    const result = await pool.query<Car>(`
-      SELECT cars.*, 
-             COALESCE(array_agg(car_images.image_url) FILTER (WHERE car_images.image_url IS NOT NULL), '{}') as images 
-      FROM cars 
-      LEFT JOIN car_images ON cars.id = car_images.car_id 
-      GROUP BY cars.id 
-      ORDER BY cars.created_at DESC
-    `);
+    const formattedCars: CarResponse[] = cars.map((car) => ({
+      id: car.id,
+      brand: car.brand,
+      model: car.model,
+      description: car.description || undefined,
+      kilometers: car.kilometers || undefined,
+      status: car.status,
+      created_at: car.created_at.toISOString(),
+      updated_at: car.updated_at.toISOString(),
+      images: car.car_images.map((img) => img.image_url), // استخدم car_images بدلاً من images
+    }));
 
-    return NextResponse.json(result.rows);
+    return NextResponse.json(formattedCars);
   } catch (error) {
     console.error("Error fetching cars:", error);
     return NextResponse.json(
-      { error: "Failed to fetch cars. Please check database connection." },
+      { error: "Failed to fetch cars." },
       { status: 500 }
     );
   }
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
-    // تهيئة الجداول إذا لم تكن متهيئة من قبل
-    if (!tablesInitialized) {
-      await initDatabase();
-      tablesInitialized = true;
-    }
+    const contentType: string = request.headers.get("content-type") || "";
 
-    // التحقق من نوع المحتوى
-    const contentType = request.headers.get("content-type") || "";
-
-    let brand,
-      model,
-      description,
-      kilometers,
-      status,
-      images: string[] = [];
+    let brand: string = "";
+    let model: string = "";
+    let description: string | null = null;
+    let kilometers: number | null = null;
+    let status: string = "available";
+    let images: string[] = [];
 
     if (contentType.includes("multipart/form-data")) {
-      // معالجة رفع الملفات
-      const formData = await request.formData();
+      const formData: FormData = await request.formData();
 
-      // الحصول على الحقول النصية
-      brand = formData.get("brand") as string;
-      model = formData.get("model") as string;
-      description = formData.get("description") as string;
-      kilometers = parseInt(formData.get("kilometers") as string) || 0;
+      brand = (formData.get("brand") as string) || "";
+      model = (formData.get("model") as string) || "";
+      description = (formData.get("description") as string) || null;
+
+      const kilometersStr: string = formData.get("kilometers") as string;
+      kilometers = kilometersStr ? parseInt(kilometersStr) : null;
+
       status = (formData.get("status") as string) || "available";
 
-      // معالجة الصور المرفوعة
-      const imageFiles = formData.getAll("images") as File[];
+      const imageFiles: File[] = formData.getAll("images") as File[];
       if (imageFiles && imageFiles.length > 0) {
         images = await handleFileUpload(formData);
       }
     } else {
-      const jsonData = await request.json();
-      brand = jsonData.brand;
-      model = jsonData.model;
-      description = jsonData.description;
-      kilometers = jsonData.kilometers;
-      status = jsonData.status;
+      const jsonData: CreateCarInput & { images?: string[] } = await request.json();
+      brand = jsonData.brand || "";
+      model = jsonData.model || "";
+      description = jsonData.description || null;
+      kilometers = jsonData.kilometers || null;
+      status = jsonData.status || "available";
       images = jsonData.images || [];
     }
-    const client = await pool.connect();
 
-    try {
-      await client.query("BEGIN");
-
-      // إضافة السيارة
-      const carResult = await client.query(
-        `INSERT INTO cars (brand, model, description, kilometers, status) 
-         VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-        [brand, model, description, kilometers, status || "available"]
+    if (!brand || !model) {
+      return NextResponse.json(
+        { error: "Brand and model are required" },
+        { status: 400 }
       );
+    }
 
-      const carId = carResult.rows[0].id;
+    const result = await prisma.$transaction(async (tx) => {
+      // استخدم tx.cars.create بدلاً من tx.car.create
+      const car = await tx.cars.create({
+        data: {
+          brand,
+          model,
+          description,
+          kilometers,
+          status,
+        },
+      });
 
-      // إضافة الصور إذا وجدت
-      if (images && images.length > 0) {
-        for (const imageUrl of images) {
-          await client.query(
-            "INSERT INTO car_images (car_id, image_url) VALUES ($1, $2)",
-            [carId, imageUrl]
-          );
-        }
+      if (images.length > 0) {
+        // استخدم tx.car_images.createMany بدلاً من tx.carImage.createMany
+        await tx.car_images.createMany({
+          data: images.map((imageUrl: string) => ({
+            car_id: car.id,
+            image_url: imageUrl,
+          })),
+        });
       }
 
-      await client.query("COMMIT");
+      // استخدم tx.cars.findUnique بدلاً من tx.car.findUnique
+      return await tx.cars.findUnique({
+        where: { id: car.id },
+        include: {
+          car_images: { // استخدم car_images بدلاً من images
+            select: { image_url: true },
+          },
+        },
+      });
+    });
 
-      // جلب السيارة مع صورها
-      const finalResult = await client.query(
-        `
-        SELECT cars.*, 
-               COALESCE(array_agg(car_images.image_url) FILTER (WHERE car_images.image_url IS NOT NULL), '{}') as images 
-        FROM cars 
-        LEFT JOIN car_images ON cars.id = car_images.car_id 
-        WHERE cars.id = $1 
-        GROUP BY cars.id
-      `,
-        [carId]
-      );
-
-      return NextResponse.json(finalResult.rows[0], { status: 201 });
-    } catch (error) {
-      await client.query("ROLLBACK");
-      throw error;
-    } finally {
-      client.release();
+    if (!result) {
+      throw new Error("Failed to create car");
     }
-  } catch (error) {
+
+    const formattedCar: CarResponse = {
+      id: result.id,
+      brand: result.brand,
+      model: result.model,
+      description: result.description || undefined,
+      kilometers: result.kilometers || undefined,
+      status: result.status,
+      created_at: result.created_at.toISOString(),
+      updated_at: result.updated_at.toISOString(),
+      images: result.car_images.map((img) => img.image_url), // استخدم car_images بدلاً من images
+    };
+
+    return NextResponse.json(formattedCar, { status: 201 });
+  } catch (error: any) {
     console.error("Error creating car:", error);
     return NextResponse.json(
       { error: "Failed to create car. Please check your input." },

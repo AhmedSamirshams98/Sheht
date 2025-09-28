@@ -7,7 +7,6 @@ import { usePathname } from "next/navigation";
 
 const Nav = () => {
   const [isMobile, setIsMobile] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const [navHeight, setNavHeight] = useState(0);
   const pathname = usePathname();
   const navRef = useRef<HTMLDivElement | null>(null);
@@ -17,9 +16,7 @@ const Nav = () => {
       setIsMobile(window.innerWidth <= 768);
     };
 
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 0);
-    };
+    
 
     const updateNavHeight = () => {
       if (navRef.current) {
@@ -33,16 +30,13 @@ const Nav = () => {
     };
 
     checkIsMobile();
-    handleScroll();
     updateNavHeight();
 
     window.addEventListener("resize", checkIsMobile);
-    window.addEventListener("scroll", handleScroll);
     window.addEventListener("resize", updateNavHeight);
 
     return () => {
       window.removeEventListener("resize", checkIsMobile);
-      window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("resize", updateNavHeight);
     };
   }, [navHeight, pathname]);
@@ -52,9 +46,9 @@ const Nav = () => {
   return (
     <div
       ref={navRef}
-      className={`fixed top-0 left-0 text-white z-[100] px-[6%] py-[2%] w-full transition-all duration-300 ${
-        scrolled ? "backdrop-blur-md" : ""
-      }`}
+      className='fixed top-0 left-0 text-white z-[100] px-[6%] py-[2%] w-full transition-all duration-300 '
+       
+
       style={{
         direction: "rtl",
         backgroundImage: !isHome ? `url(${backgroundimage.src})` : "none",

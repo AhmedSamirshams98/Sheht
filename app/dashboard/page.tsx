@@ -1012,7 +1012,12 @@ export default function Dashboard() {
                         <p className="text-gray-600 mb-2">{car.description}</p>
                         <div className="flex items-center space-x-4 text-sm text-gray-500">
                           <span>
-                            الكيلومترات: {car.kilometers.toLocaleString()}
+                            <span>
+                              الكيلومترات:{" "}
+                              {car.kilometers
+                                ? car.kilometers.toLocaleString()
+                                : "غير محدد"}
+                            </span>
                           </span>
                           <span
                             className={`inline-block px-2 py-1 rounded ${

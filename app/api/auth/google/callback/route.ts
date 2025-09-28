@@ -1,7 +1,6 @@
-// app/api/auth/google/callback/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import pool from "../../../../lib/db";
-import { signToken } from "../../../../lib/jwt";
+import { signToken } from "../../../../../lib/jwt";
+import prisma from "@/lib/prisma";
 
 type GoogleTokenResponse = {
   access_token?: string;
@@ -63,26 +62,23 @@ export async function GET(request: NextRequest) {
     const name = profile.name;
     const picture = profile.picture;
 
-    // 3) إدخال أو تحديث المستخدم في DB
-    const upsertQuery = `
-      INSERT INTO users (google_id, email, name, picture, role)
-      VALUES ($1, $2, $3, $4, COALESCE((SELECT role FROM users WHERE email = $2), 'user'))
-      ON CONFLICT (email) DO UPDATE
-        SET google_id = COALESCE(users.google_id, EXCLUDED.google_id),
-            name = EXCLUDED.name,
-            picture = EXCLUDED.picture,
-            updated_at = now()
-      RETURNING id, email, name, picture, role;
-    `;
-
-    const result = await pool.query(upsertQuery, [
-      googleId,
-      email,
-      name,
-      picture,
-    ]);
-
-    const user = result.rows[0];
+    // 3) إدخال أو تحديث المستخدم في DB باستخدام Prisma
+    const user = await prisma.appUsers.upsert({
+      where: { email },
+      update: {
+        google_id: googleId,
+        name,
+        picture,
+        updated_at: new Date(),
+      },
+      create: {
+        google_id: googleId,
+        email,
+        name,
+        picture,
+        role: "user",
+      },
+    });
 
     // 4) توليد JWT
     const jwtToken = signToken({
@@ -97,7 +93,6 @@ export async function GET(request: NextRequest) {
 
     const response = NextResponse.redirect(new URL(redirectUrl, request.url));
 
-    // ضبط الكوكي
     response.cookies.set({
       name: "token",
       value: jwtToken,

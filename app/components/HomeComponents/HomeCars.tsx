@@ -13,6 +13,8 @@ import shehta9 from "../../../public/images/shehta9.png";
 import "../emblaCarousel/emblaCarousel.css";
 import { Button } from "../ui/Button";
 import EmblaCarousel from "../emblaCarousel/EmblaCarousel";
+import whats from "@/public/images/whatsapp.svg";
+import phone from "@/public/images/phonenumber.svg";
 
 const HomeCars = () => {
   const carsData = [
@@ -113,29 +115,29 @@ const HomeCars = () => {
     <div
       id="cars"
       key={car.id}
-      className="embla__slide h-[62vh] md:h-[44vh] lg:h-[54vh]  bg-white rounded-lg overflow-hidden shadow-lg flex flex-col items-center "
+      className="embla__slide  h-auto  bg-white rounded-lg overflow-hidden shadow-lg flex flex-col "
     >
-      <div className="relative w-full ">
+      <div className="relative w-full aspect-square ">
         <Image
           src={car.image}
           alt={`${car.brand} ${car.model}`}
           className="rounded-[26px]  w-full aspect-square  object-cover  "
         />
       </div>
-      <div className="   w-full justify-between  flex  flex-col  h-full">
+      <div className="   w-full justify-between  flex  flex-col  h-full gap-4  mt-2  ">
         <div className="flex flex-col ">
-          <h3 className="  text-black font-semibold text-center text-[1.5vw]">
+          <h3 className="  text-black font-semibold text-center text-[6vw] md:text-[1.5vw] lg:text-[1vw]">
             {car.model}
           </h3>
-          <div className="flex flex-row justify-between  ">
-            <h1 className="text-black text-[4vw] md:text-[1vw] font-medium">
+          <div className="flex flex-row justify-between mt-2  ">
+            <h1 className="text-black text-[4vw] md:text-[1.5vw] lg:text-[1vw] font-medium">
               {car.brand}
             </h1>
-            <div className="flex justify-between gap-6 mt-2">
-              <span className="text-black text-[4vw] md:text-[1vw] font-medium">
+            <div className="flex justify-between gap-6">
+              <span className="text-black text-[4vw] md:text-[1.5vw] lg:text-[1vw] font-medium">
                 {car.kilometers.toLocaleString()}KM
               </span>
-              <span className="text-black text-[4vw] md:text-[1vw] font-medium">
+              <span className="text-black text-[4vw] md:text-[1.5vw] lg:text-[1vw] font-medium">
                 {" "}
                 {car.year}
               </span>
@@ -143,16 +145,33 @@ const HomeCars = () => {
           </div>
           <p
             style={{ direction: "rtl" }}
-            className=" text-black text-[2vw] md:text-[1vw] text-right font-medium line-clamp-2  "
+            className=" text-black text-[4vw] md:text-[1.5vw] lg:text-[1vw] text-right font-medium line-clamp-3  "
           >
-            {car.description}
+            {/* {car.description} */}
+            هناك حقيقة مثبتة منذ زمن طويل وهي أن المحتوى المقروء لصفحة ما سيلهي
+            القارئ عن التركيز على الشكل الخارجي للنص أو شكل توضع الفقرات في
+            الصفحة التي يقرأها. ولذلك يتم استخدام طريقة لوريم إيبسوم لأنها تعطي
+            توزيعاَ طبيعياَ -إلى حد ما- للأحرف عوضاً عن استخدام هنا يوجد محتوى
+            نصي، هنا يوجد محتوى نص فتجعلها تبدو (أي الأحرف) وكأنها نص مقروء.
           </p>
         </div>
-        <div className="flex flex-row justify-between gap-4 w-full mt-[8%]">
-          <button className="bg-[#E6E6E6] w-full h-[4vh] font-bold text-black rounded-[42.5px]  text- text-[4vw] md:text-[1vw]">
+        <div className="flex flex-row justify-between gap-1 w-full ">
+          <Image
+            width={50}
+            height={50}
+            src={whats}
+            alt="shehta trading whatsapp"
+          />
+          <Image
+            width={50}
+            height={50}
+            src={phone}
+            alt="shehta trading whatsapp"
+          />
+          <button className="bg-[#E6E6E6] w-full    font-bold text-black rounded-[42.5px]  text- text-[4vw] md:text-[1.5vw] lg:text-[1.2vw] xl:text-[0.8vw] p-1">
             {car.condition}
           </button>
-          <button className="bg-[#FDB800] w-full h-[4vh] font-bold text-black rounded-[42.5px]  text- text-[4vw] md:text-[1vw]">
+          <button className="bg-[#FDB800] w-full   font-bold text-black rounded-[42.5px]  text- text-[4vw] md:text-[1.5vw] lg:text-[1.2vw] xl:text-[0.8vw] p-1">
             قراءة المزيد
           </button>
         </div>

@@ -9,12 +9,12 @@ const HomeFirst = () => {
   return (
     <div className="w-screen  relative    " style={{ direction: "rtl" }}>
       <Image
-        className="w-full  object-cover max-h-[100vh]"
+        className=" w-screen object-cover h-[40vh] md:h-auto md:max-h-[100vh]"
         src={backgroundimage}
         alt="shehtatradingcars"
       />
-      <div className="flex flex-col   gap-4 md:gap-6 text-white text-right absolute top-[26%] md:top-[16%] right-[7%]">
-        <h1 className="text-[5vw] md:text-[4vw]">
+      <div className="flex flex-col    gap-4 md:gap-6 text-white text-right absolute top-[12vh]  right-[7%]">
+        <h1 className="text-[3em] md:text-[2em] ">
           سيـارة أحـلامـك!
           <br /> لحد باب البيت
         </h1>

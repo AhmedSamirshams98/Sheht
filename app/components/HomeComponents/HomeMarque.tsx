@@ -7,7 +7,7 @@ import Image from "next/image";
 
 const HomeMarque = () => {
   return (
-    <div className="text-white w-screen flex flex-col gap-4 m-2 ">
+    <div className="text-white w-screen flex flex-col gap-4  ">
       <Marquee direction="left" speed={40} pauseOnHover={true}>
         <Image src={marque1} alt="shehtaTrading Cars Logo" />
       </Marquee>

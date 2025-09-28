@@ -1,12 +1,26 @@
 .embla {
   margin: auto;
-  --slide-size: 18%;
   width: 90%;
   direction: ltr;
 }
 @media (min-width: 320px) {
   .embla {
     --slide-size: 18%;
+  }
+}
+@media (min-width: 480px) {
+  .embla {
+    --slide-size: 18%;
+  }
+}
+@media (min-width: 768px) {
+  .embla {
+    --slide-size: 20%;
+  }
+}
+@media (min-width: 1440px) {
+  .embla {
+    --slide-size: 20%;
   }
 }
 .embla__viewport {
