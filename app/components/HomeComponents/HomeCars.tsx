@@ -1,5 +1,5 @@
+"use client";
 import React from "react";
-
 import Image from "next/image";
 import shehta1 from "../../../public/images/shehta1.png";
 import shehta2 from "../../../public/images/shehta2.png";
@@ -10,27 +10,34 @@ import shehta6 from "../../../public/images/shehta6.png";
 import shehta7 from "../../../public/images/shehta7.png";
 import shehta8 from "../../../public/images/shehta8.png";
 import shehta9 from "../../../public/images/shehta9.png";
+
+import EmblaCarouselSlider from "../emblaCarouselSlider/EmblaCarouselSlider";
+import "../emblaCarouselSlider/emblaCarouselSlider.css";
+
 import "../emblaCarousel/emblaCarousel.css";
+// نفس اللي بتستخدمه في HomeAbout
 import { Button } from "../ui/Button";
-import EmblaCarousel from "../emblaCarousel/EmblaCarousel";
 import whats from "@/public/images/whatsapp.svg";
 import phone from "@/public/images/phonenumber.svg";
+import EmblaCarousel from "../emblaCarousel/EmblaCarousel";
+import Link from "next/link";
 
 const HomeCars = () => {
   const carsData = [
     {
       id: 1,
-      image: shehta1,
+      images: [shehta1, shehta2, shehta3],
       brand: "تويوتا",
       model: "كامري",
       year: 2022,
       kilometers: 15000,
       condition: "جيدة جداً",
-      description: "سيارة موديل حديث، محافظة عليها، بدون حوادث",
+      description:
+        "هناك حقيقة مثبتة منذ زمن طويل وهي أن المحتوى المقروء لصفحة ما سيلهي القارئ عن التركيز على الشكل الخارجي للنص أو شكل توضع الفقرات في الصفحة التي يقرأها. ولذلك يتم استخدام طريقة لوريم إيبسوم لأنها تعطي توزيعاَ طبيعياَ -إلى حد ما- للأحرف عوضاً عن استخدام هنا يوجد محتوى",
     },
     {
       id: 2,
-      image: shehta2,
+      images: [shehta4, shehta5],
       brand: "هيونداي",
       model: "سوناتا",
       year: 2021,
@@ -40,7 +47,7 @@ const HomeCars = () => {
     },
     {
       id: 3,
-      image: shehta3,
+      images: [shehta6, shehta7, shehta8],
       brand: "كيا",
       model: "سبورتاج",
       year: 2020,
@@ -50,7 +57,7 @@ const HomeCars = () => {
     },
     {
       id: 4,
-      image: shehta4,
+      images: [shehta9],
       brand: "مرسيدس",
       model: "فئة C",
       year: 2019,
@@ -60,143 +67,103 @@ const HomeCars = () => {
     },
     {
       id: 5,
-      image: shehta5,
-      brand: "بي إم دبليو",
-      model: "فئة 3",
-      year: 2021,
-      kilometers: 30000,
-      condition: "ممتازة",
-      description: "كاملة المواصفات، نظيفة، صيانة دورية",
+      images: [shehta9],
+      brand: "مرسيدس",
+      model: "فئة C",
+      year: 2019,
+      kilometers: 60000,
+      condition: "جيدة جداً",
+      description: "فاخرة، ملونة، مثبت سرعة، كاميرا خلفية",
     },
     {
       id: 6,
-      image: shehta6,
-      brand: "نيسان",
-      model: "صني",
-      year: 2020,
-      kilometers: 45000,
-      condition: "جيدة",
-      description: "اقتصادية في الاستهلاك، مناسبة كسيارة أولى",
-    },
-    {
-      id: 7,
-      image: shehta7,
-      brand: "شيفروليه",
-      model: "كروز",
-      year: 2018,
-      kilometers: 70000,
-      condition: "متوسطة",
-      description:
-        " هناك حقيقة مثبتة منذ زمن طويل وهي أن المحتوى المقروء لصفحة ما سيلهي القارئ عن التركيز على الشكل الخارجي للنص أو شكل توضع الفقرات في الصفحة التي يقرأها. ولذلك يتم استخدام طريقة لوريم إيبسوم لأنها تعطي توزيعاَ طبيعياَ -إلى حد ما- للأحرف عوضاً عن استخدا   ",
-    },
-    {
-      id: 8,
-      image: shehta8,
-      brand: "هوندا",
-      model: "سيفيك",
-      year: 2022,
-      kilometers: 10000,
-      condition: "ممتازة",
-      description: "موديل حديث، ضمان الوكالة، خالية من الحوادث",
-    },
-    {
-      id: 9,
-      image: shehta9,
-      brand: "فورد",
-      model: "فيوجن",
+      images: [shehta9],
+      brand: "مرسيدس",
+      model: "فئة C",
       year: 2019,
-      kilometers: 55000,
-      condition: "جيدة",
-      description: "مريحة للطرق الطويلة، مسجل شاشة، مقاعد جلد",
+      kilometers: 60000,
+      condition: "جيدة جداً",
+      description: "فاخرة، ملونة، مثبت سرعة، كاميرا خلفية",
     },
   ];
-
-  const aboutSlides = carsData.map((car) => (
-    <div
-      id="cars"
-      key={car.id}
-      className="embla__slide  h-auto  bg-white rounded-lg overflow-hidden shadow-lg flex flex-col "
-    >
-      <div className="relative w-full aspect-square ">
-        <Image
-          src={car.image}
-          alt={`${car.brand} ${car.model}`}
-          className="rounded-[26px]  w-full aspect-square  object-cover  "
-        />
-      </div>
-      <div className="   w-full justify-between  flex  flex-col  h-full gap-4  mt-2  ">
-        <div className="flex flex-col ">
-          <h3 className="  text-black font-semibold text-center text-[6vw] md:text-[1.5vw] lg:text-[1vw]">
-            {car.model}
-          </h3>
-          <div className="flex flex-row justify-between mt-2  ">
-            <h1 className="text-black text-[4vw] md:text-[1.5vw] lg:text-[1vw] font-medium">
-              {car.brand}
-            </h1>
-            <div className="flex justify-between gap-6">
-              <span className="text-black text-[4vw] md:text-[1.5vw] lg:text-[1vw] font-medium">
-                {car.kilometers.toLocaleString()}KM
-              </span>
-              <span className="text-black text-[4vw] md:text-[1.5vw] lg:text-[1vw] font-medium">
-                {" "}
-                {car.year}
-              </span>
-            </div>
-          </div>
-          <p
-            style={{ direction: "rtl" }}
-            className=" text-black text-[4vw] md:text-[1.5vw] lg:text-[1vw] text-right font-medium line-clamp-3  "
-          >
-            {/* {car.description} */}
-            هناك حقيقة مثبتة منذ زمن طويل وهي أن المحتوى المقروء لصفحة ما سيلهي
-            القارئ عن التركيز على الشكل الخارجي للنص أو شكل توضع الفقرات في
-            الصفحة التي يقرأها. ولذلك يتم استخدام طريقة لوريم إيبسوم لأنها تعطي
-            توزيعاَ طبيعياَ -إلى حد ما- للأحرف عوضاً عن استخدام هنا يوجد محتوى
-            نصي، هنا يوجد محتوى نص فتجعلها تبدو (أي الأحرف) وكأنها نص مقروء.
-          </p>
-        </div>
-        <div className="flex flex-row justify-between gap-1 w-full ">
-          <Image
-            width={50}
-            height={50}
-            src={whats}
-            alt="shehta trading whatsapp"
-          />
-          <Image
-            width={50}
-            height={50}
-            src={phone}
-            alt="shehta trading whatsapp"
-          />
-          <button className="bg-[#E6E6E6] w-full    font-bold text-black rounded-[42.5px]  text- text-[4vw] md:text-[1.5vw] lg:text-[1.2vw] xl:text-[0.8vw] p-1">
-            {car.condition}
-          </button>
-          <button className="bg-[#FDB800] w-full   font-bold text-black rounded-[42.5px]  text- text-[4vw] md:text-[1.5vw] lg:text-[1.2vw] xl:text-[0.8vw] p-1">
-            قراءة المزيد
-          </button>
-        </div>
-      </div>
-    </div>
-  ));
 
   const OPTIONS = {
     loop: true,
     duration: 20,
   };
 
+  const aboutSlides = carsData.map((car) => {
+    const carSlides = car.images.map((img, index) => (
+      <div key={index} className="slider-slide object-cover">
+        <Image
+          src={img}
+          alt={`${car.brand} ${car.model}`}
+          className="object-cover w-full h-full rounded-[26px]"
+        />
+      </div>
+    ));
+
+    return (
+      <div
+        key={car.id}
+        className="embla__slide p-[18px] bg-white rounded-[26px] overflow-hidden shadow-lg flex flex-col"
+      >
+        {/* سلايدر صور السيارة */}
+        <EmblaCarouselSlider slides={carSlides} options={{ loop: true }} />
+
+        {/* تفاصيل السيارة */}
+        <div className="w flex flex-col gap-2 mt-[2vh] w-full  aspect-video ">
+          <h3 className="text-black font-semibold text-center text-[6vw] md:text-[1.5vw] ">
+            {car.model}
+          </h3>
+          <div className="flex justify-between ">
+            <h1 className="text-black text-[4vw] md:text-[1vw]  font-semibold">
+              {car.brand}
+            </h1>
+            <div className="flex gap-4">
+              <span className="text-black text-[4vw] md:text-[1vw] font-semibold">
+                {car.kilometers.toLocaleString()} KM
+              </span>
+              <span className="text-black text-[4vw] md:text-[1vw]  font-semibold">
+                {car.year}
+              </span>
+            </div>
+          </div>
+          <p
+            style={{ direction: "rtl" }}
+            className="text-black text-justify text-[4vw] md:text-[1.5vw] lg:text-[1vw]  font-medium line-clamp-4 "
+          >
+            {car.description}
+          </p>
+        </div>
+        <div className="flex flex-row justify-between gap-2 items-center  w-full">
+          <Image width={40} height={40} src={whats} alt="whatsapp" />
+          <Image width={40} height={40} src={phone} alt="phone" />
+          <button className="bg-[#E6E6E6]  font-bold text-black rounded-[42.5px] w-[50%] h-[32px] text-[4vw] md:text-[1.5vw]  p-1">
+            {car.condition}
+          </button>
+          <button className="bg-[#FDB800]  font-bold text-black rounded-[42.5px] w-[50%] h-[32px] text-[4vw] md:text-[1.5vw]   p-1">
+            قراءة المزيد
+          </button>
+        </div>
+      </div>
+    );
+  });
+
   return (
     <div
-      className="bg-[#FDB800] w-screen py-10 flex flex-col items-center"
+      className="bg-[#FDB800] w-screen  flex flex-col items-center justify-around py-8 gap-4"
       style={{ direction: "rtl" }}
     >
-      <h1 className="px-[8%] text-[8vw]  md:text-[2vw] font-bold text-center !md:text-right text-gray-900">
+      <h1 className="px-[8%] text-[6vw] md:text-[2vw] font-bold w-full text-center md:text-right text-gray-900">
         المعروضــات ✨
       </h1>
-      <div className=" ">
+      <div className="w-full relative flex items-center justify-center  ">
         <EmblaCarousel slides={aboutSlides} options={OPTIONS} />
       </div>
-
-      <Button kind="secondarySpecial">عرض الكل</Button>
+      <Link className="w-full flex justify-center" href="/allcars">
+        <Button kind="secondarySpecial">عرض الكل</Button>
+      </Link>
     </div>
   );
 };

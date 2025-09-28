@@ -1,34 +1,53 @@
 .embla {
-  margin: auto;
-  width: 90%;
-  direction: ltr;
+  width: 100%;
+  position: relative;
+  --slide-size: 100%;
+  --slide-spacing: 1rem;
+  direction: ltr; /* إعادة تعيين الاتجاه للعناصر الداخلية */
+  z-index: 60;
+  padding: 10px;
 }
-@media (min-width: 320px) {
+
+@media (min-width: 640px) {
   .embla {
-    --slide-size: 18%;
+    width: 70%;
+    --slide-size: 80%;
+    --slide-spacing: 1rem;
+    direction: ltr; /* إعادة تعيين الاتجاه للعناصر الداخلية */
   }
 }
-@media (min-width: 480px) {
-  .embla {
-    --slide-size: 18%;
-  }
-}
+
 @media (min-width: 768px) {
   .embla {
-    --slide-size: 20%;
+    width: 100%;
+    --slide-size: 40%;
+    --slide-spacing: 1rem;
+    direction: ltr;
   }
 }
-@media (min-width: 1440px) {
+
+@media (min-width: 1024px) {
   .embla {
-    --slide-size: 20%;
+    width: 100%;
+    --slide-size: 35%;
+    --slide-spacing: 1rem;
+    direction: ltr;
   }
 }
-.embla__viewport {
-  overflow: hidden;
+
+@media (min-width: 1280px) {
+  .embla {
+    width: 100%;
+    --slide-size: 25%;
+    --slide-spacing: 1rem;
+  }
 }
+
 .embla__container {
   display: flex;
-  touch-action: pan-y pinch-zoom;
+  width: auto;
+  direction: ltr; /* إعادة تعيين الاتجاه للعناصر الداخلية */
+
   margin-left: calc(var(--slide-spacing) * -1);
 }
 .embla__slide {
@@ -36,8 +55,6 @@
   flex: 0 0 var(--slide-size);
   min-width: 0;
   padding-left: var(--slide-spacing);
-  border-radius: 24px;
-  padding: 18px;
 }
 .embla__slide__img {
   border-radius: 1.8rem;
@@ -45,19 +62,77 @@
   width: 100%;
   object-fit: cover;
 }
+
+/* إضافة الـ gradients على الجانبين */
+.embla::before,
+.embla::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50px; /* عرض أقل للشاشات الصغيرة */
+  z-index: 1;
+  pointer-events: none;
+}
+
+.embla::before {
+  left: -4vw;
+  background: linear-gradient(90deg, #fdb800 0%, #fdb80000 100%);
+}
+
+.embla::after {
+  right: -4vw;
+  background: linear-gradient(270deg, #fdb800 0%, #fdb80000 100%);
+}
+
+/* للشاشات المتوسطة (md) وما فوق */
+@media (min-width: 768px) {
+  .embla::before,
+  .embla::after {
+    width: 100px; /* عرض أكبر للشاشات المتوسطة */
+  }
+
+  .embla::before {
+    left: -5vw; /* تقليل المسافة السلبية */
+  }
+
+  .embla::after {
+    right: -5vw; /* تقليل المسافة السلبية */
+  }
+}
+
+/* للشاشات الكبيرة (lg) وما فوق */
+@media (min-width: 1024px) {
+  .embla::before,
+  .embla::after {
+    width: 150px; /* عرض أكبر للشاشات الكبيرة */
+  }
+
+  .embla::before {
+    left: 0; /* إزالة المسافة السلبية */
+  }
+
+  .embla::after {
+    right: 0; /* إزالة المسافة السلبية */
+  }
+}
 .embla__controls {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 1.2rem;
-  margin-top: 1.8rem;
+  position: relative;
+  top: 2vh;
 }
 .embla__buttons {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 32rem;
+  display: flex;
+
   align-items: center;
+  position: relative;
+  justify-content: center;
+  top: 8vh;
+  gap: 34vw;
 }
 .embla__button {
   background-color: black;
@@ -68,9 +143,8 @@
   border: 0;
   padding: 0;
   margin: 0;
-  box-shadow: inset 0 0 0 0.2rem var(--detail-medium-contrast);
-  width: 62px;
-  height: 63px;
+  width: 6vw;
+  height: 6vw;
   z-index: 1;
   border-radius: 50%;
   color: var(--text-body);
@@ -83,8 +157,8 @@
   color: var(--detail-high-contrast);
 }
 .embla__button__svg {
-  width: 35%;
-  height: 35%;
+  width: 4vw;
+  height: 4vw;
 }
 .embla__dots {
   display: flex;

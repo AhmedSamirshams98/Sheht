@@ -32,12 +32,12 @@ const MobileNav = () => {
     <div className="flex flex-row items-center justify-between w-full backdrop:backdrop-blur-3xl p-2">
       <div className="flex flex-row justify-between w-full bg-gradient-to-r from-[#3B260680] to-[#3B260680]/50 rounded-[42px]">
         <Link className="flex flex-row gap-1 items-center z-[60]" href="/">
-          <Image
-            className="w-[40px] h-[40px] object-cover"
+          <Image width={31} height={40}
+            className=" object-cover"
             src={shehtalogo}
             alt="shehtatraidingcars شحتة للتجارة"
           />
-          <h1 className="font-bold text-[0.8em] md:text-[1.2em] ">
+          <h1 className="font-bold  ">
             شحتة للتجارة
           </h1>
         </Link>

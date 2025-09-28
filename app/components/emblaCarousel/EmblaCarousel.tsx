@@ -1,23 +1,23 @@
 "use client";
-import React from 'react'
-import { EmblaOptionsType } from 'embla-carousel'
+import React from "react";
+import { EmblaOptionsType } from "embla-carousel";
 // import { DotButton, useDotButton } from './EmblaCarouselDotButton'
 import {
   PrevButton,
   NextButton,
-  usePrevNextButtons
-} from './EmblaCarouselArrowButtons'
-import useEmblaCarousel from 'embla-carousel-react'
+  usePrevNextButtons,
+} from "./EmblaCarouselArrowButtons";
+import useEmblaCarousel from "embla-carousel-react";
 
 type PropType = {
   slides: React.ReactNode[];
   options?: EmblaOptionsType;
 };
-
+import "./emblaCarousel.css";
 
 const EmblaCarousel: React.FC<PropType> = (props) => {
-  const { slides, options } = props
-  const [emblaRef, emblaApi] = useEmblaCarousel(options)
+  const { slides, options } = props;
+  const [emblaRef, emblaApi] = useEmblaCarousel(options);
 
   // const { selectedIndex, scrollSnaps, onDotButtonClick } =
   //   useDotButton(emblaApi)
@@ -26,16 +26,16 @@ const EmblaCarousel: React.FC<PropType> = (props) => {
     prevBtnDisabled,
     nextBtnDisabled,
     onPrevButtonClick,
-    onNextButtonClick
-  } = usePrevNextButtons(emblaApi)
+    onNextButtonClick,
+  } = usePrevNextButtons(emblaApi);
 
   return (
-    <section className="embla">
+    <section className="embla ">
       <div className="embla__viewport" ref={emblaRef}>
-        <div className="embla__container">
-          {slides.map((slide, index) => (
+        <div className="embla__container ">
+          {slides.map((slides, index) => (
             <div className="embla__slide " key={index}>
-              {slide}
+              {slides}
             </div>
           ))}
         </div>
@@ -60,7 +60,7 @@ const EmblaCarousel: React.FC<PropType> = (props) => {
         </div> */}
       </div>
     </section>
-  )
-}
+  );
+};
 
-export default EmblaCarousel
+export default EmblaCarousel;
