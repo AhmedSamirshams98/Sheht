@@ -1,85 +1,104 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { CarResponse, CreateCarInput } from "../../../../types/car";
-export async function PUT(
+
+export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
     const carId = parseInt(params.id);
 
-    const existingCar = await prisma.car.findUnique({
+    console.log("🔍 Fetching car with ID:", carId);
+
+    if (isNaN(carId)) {
+      return NextResponse.json(
+        { error: "معرف السيارة غير صحيح" },
+        { status: 400 }
+      );
+    }
+
+    // استخدم prisma.cars بدلاً من prisma.car
+    const car = await prisma.cars.findUnique({
       where: { id: carId },
+      include: {
+        car_images: {
+          select: {
+            image_url: true,
+          },
+        },
+      },
     });
 
-    if (!existingCar) {
-      return NextResponse.json({ error: "Car not found" }, { status: 404 });
+    console.log("📦 Found car:", car);
+
+    if (!car) {
+      return NextResponse.json(
+        { error: "السيارة غير موجودة" },
+        { status: 404 }
+      );
     }
 
-    const contentType = request.headers.get("content-type") || "";
-    let brand = "";
-    let model = "";
-    let description: string | null = null;
-    let kilometers: number | null = null;
-    let status = "available";
-    let images: string[] = [];
+    const formattedCar = {
+      id: car.id,
+      brand: car.brand,
+      model: car.model,
 
-    if (contentType.includes("multipart/form-data")) {
-      const formData = await request.formData();
+      description: car.description,
+      kilometers: car.kilometers,
+      status: car.status,
+      images: car.car_images.map((img) => img.image_url),
+      created_at: car.created_at.toISOString(),
+      updated_at: car.updated_at.toISOString(),
+    };
 
-      brand = (formData.get("brand") as string) || "";
-      model = (formData.get("model") as string) || "";
-      description = (formData.get("description") as string) || null;
-      kilometers = parseInt(formData.get("kilometers") as string) || null;
-      status = (formData.get("status") as string) || "available";
+    return NextResponse.json(formattedCar);
+  } catch (error) {
+    console.error("❌ Error fetching car:", error);
+    return NextResponse.json(
+      { error: "فشل في جلب بيانات السيارة" },
+      { status: 500 }
+    );
+  }
+}
 
-      const imageFiles = formData.getAll("images") as File[];
-      if (imageFiles.length > 0) {
-        const { handleFileUpload } = await import("../../../lib/upload");
-        images = await handleFileUpload(formData);
-      }
-    } else {
-      const jsonData: CreateCarInput & { images?: string[] } =
-        await request.json();
+// يمكنك إضافة PUT و DELETE لاحقاً إذا احتجت لهم
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const carId = parseInt(params.id);
+    const data = await request.json();
 
-      ({
-        brand = "",
-        model = "",
-        description = null,
-        kilometers = null,
-        status = "available",
-        images = [],
-      } = jsonData);
-    }
-
-    // هنا النوع بتاع tx بيتحدد تلقائيًا كـ Prisma.TransactionClient
     const result = await prisma.$transaction(async (tx) => {
-      const updatedCar = await tx.car.update({
+      const updatedCar = await tx.cars.update({
         where: { id: carId },
         data: {
-          brand,
-          model,
-          description,
-          kilometers,
-          status,
+          brand: data.brand,
+          model: data.model,
+          year: data.year,
+          condition: data.condition,
+          description: data.description,
+          kilometers: data.kilometers,
+          status: data.status,
           updated_at: new Date(),
         },
       });
 
-      await tx.carImage.deleteMany({ where: { car_id: carId } });
+      await tx.car_images.deleteMany({ where: { car_id: carId } });
 
-      if (images.length > 0) {
-        await tx.carImage.createMany({
-          data: images.map((imageUrl) => ({
+      if (data.images && data.images.length > 0) {
+        await tx.car_images.createMany({
+          data: data.images.map((imageUrl: string) => ({
             car_id: carId,
             image_url: imageUrl,
           })),
         });
       }
 
-      return tx.car.findUnique({
+      return tx.cars.findUnique({
         where: { id: carId },
-        include: { images: { select: { image_url: true } } },
+        include: { car_images: { select: { image_url: true } } },
       });
     });
 
@@ -87,16 +106,17 @@ export async function PUT(
       throw new Error("Failed to update car");
     }
 
-    const formattedCar: CarResponse = {
+    const formattedCar = {
       id: result.id,
       brand: result.brand,
       model: result.model,
+
       description: result.description,
       kilometers: result.kilometers,
       status: result.status,
+      images: result.car_images.map((img) => img.image_url),
       created_at: result.created_at.toISOString(),
       updated_at: result.updated_at.toISOString(),
-      images: result.images.map((img) => img.image_url), // img معروف هنا
     };
 
     return NextResponse.json(formattedCar);
@@ -116,8 +136,7 @@ export async function DELETE(
   try {
     const carId = parseInt(params.id);
 
-    // التحقق من وجود السيارة
-    const existingCar = await prisma.car.findUnique({
+    const existingCar = await prisma.cars.findUnique({
       where: { id: carId },
     });
 
@@ -125,15 +144,12 @@ export async function DELETE(
       return NextResponse.json({ error: "Car not found" }, { status: 404 });
     }
 
-    // استخدام transaction للحذف (بسبب العلاقات)
     await prisma.$transaction(async (tx) => {
-      // حذف الصور المرتبطة أولاً (بسبب foreign key constraint)
-      await tx.carImage.deleteMany({
+      await tx.car_images.deleteMany({
         where: { car_id: carId },
       });
 
-      // ثم حذف السيارة
-      await tx.car.delete({
+      await tx.cars.delete({
         where: { id: carId },
       });
     });

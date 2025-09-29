@@ -29,17 +29,17 @@ const MobileNav = () => {
   };
 
   return (
-    <div className="flex flex-row items-center justify-between w-full backdrop:backdrop-blur-3xl p-2">
+    <div className="flex flex-row items-center jus py-2 tify-between w-full backdrop:backdrop-blur-3xl">
       <div className="flex flex-row justify-between w-full bg-gradient-to-r from-[#3B260680] to-[#3B260680]/50 rounded-[42px]">
-        <Link className="flex flex-row gap-1 items-center z-[60]" href="/">
-          <Image width={31} height={40}
+        <Link className="flex flex-row gap-1 items-center  z-[60]" href="/">
+          <Image
+            width={31}
+            height={40}
             className=" object-cover"
             src={shehtalogo}
             alt="shehtatraidingcars شحتة للتجارة"
           />
-          <h1 className="font-bold  ">
-            شحتة للتجارة
-          </h1>
+          <h1 className="font-bold  ">شحتة للتجارة</h1>
         </Link>
 
         <button
@@ -58,12 +58,12 @@ const MobileNav = () => {
           }`}
           onClick={(e) => e.stopPropagation()}
         >
-          <nav className="p-4 mt-[20%]" dir="rtl">
+          <nav className="px-[8%] py-[20%]" dir="rtl">
             {navLinks.map((link) => (
               <Link
                 key={link.id}
                 href={link.path}
-                className={`block py-3 text-white text-[6vw] rounded px-2 transition-all duration-300 ${
+                className={`block py-3 text-white text-[4vw] rounded px-2 transition-all duration-300 ${
                   isAnimating
                     ? "opacity-100 translate-x-0"
                     : "opacity-0 translate-x-4"

@@ -5,7 +5,6 @@
   --slide-spacing: 1rem;
   direction: ltr; /* إعادة تعيين الاتجاه للعناصر الداخلية */
   z-index: 60;
-  padding: 10px;
 }
 
 @media (min-width: 640px) {
@@ -75,7 +74,7 @@
   pointer-events: none;
 }
 
-.embla::before {
+/* .embla::before {
   left: -4vw;
   background: linear-gradient(90deg, #fdb800 0%, #fdb80000 100%);
 }
@@ -83,7 +82,7 @@
 .embla::after {
   right: -4vw;
   background: linear-gradient(270deg, #fdb800 0%, #fdb80000 100%);
-}
+} */
 
 /* للشاشات المتوسطة (md) وما فوق */
 @media (min-width: 768px) {

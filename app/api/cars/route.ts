@@ -1,14 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma"; // تأكد من الاستيراد كـ default
+import prisma from "@/lib/prisma";
 import { handleFileUpload } from "@/lib/upload";
-import { CarResponse, CreateCarInput } from "@/types/car";
 
 export async function GET(): Promise<NextResponse> {
   try {
-    // استخدم prisma.cars بدلاً من prisma.car
     const cars = await prisma.cars.findMany({
       include: {
-        car_images: { // استخدم car_images بدلاً من images
+        car_images: {
           select: {
             image_url: true,
           },
@@ -19,16 +17,18 @@ export async function GET(): Promise<NextResponse> {
       },
     });
 
-    const formattedCars: CarResponse[] = cars.map((car) => ({
+    const formattedCars = cars.map((car) => ({
       id: car.id,
       brand: car.brand,
       model: car.model,
-      description: car.description || undefined,
-      kilometers: car.kilometers || undefined,
+      year: car.year || 0,
+      condition: car.condition || "جديدة",
+      description: car.description || "",
+      kilometers: car.kilometers || 0,
       status: car.status,
+      images: car.car_images.map((img) => img.image_url),
       created_at: car.created_at.toISOString(),
       updated_at: car.updated_at.toISOString(),
-      images: car.car_images.map((img) => img.image_url), // استخدم car_images بدلاً من images
     }));
 
     return NextResponse.json(formattedCars);
@@ -47,8 +47,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     let brand: string = "";
     let model: string = "";
-    let description: string | null = null;
-    let kilometers: number | null = null;
+    let year: number = 0;
+    let condition: string = "جديدة";
+    let description: string = "";
+    let kilometers: number = 0;
     let status: string = "available";
     let images: string[] = [];
 
@@ -57,10 +59,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
       brand = (formData.get("brand") as string) || "";
       model = (formData.get("model") as string) || "";
-      description = (formData.get("description") as string) || null;
+      year = parseInt(formData.get("year") as string) || new Date().getFullYear();
+      condition = (formData.get("condition") as string) || "جديدة";
+      description = (formData.get("description") as string) || "";
 
       const kilometersStr: string = formData.get("kilometers") as string;
-      kilometers = kilometersStr ? parseInt(kilometersStr) : null;
+      kilometers = kilometersStr ? parseInt(kilometersStr) : 0;
 
       status = (formData.get("status") as string) || "available";
 
@@ -69,11 +73,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         images = await handleFileUpload(formData);
       }
     } else {
-      const jsonData: CreateCarInput & { images?: string[] } = await request.json();
+      const jsonData = await request.json();
       brand = jsonData.brand || "";
       model = jsonData.model || "";
-      description = jsonData.description || null;
-      kilometers = jsonData.kilometers || null;
+      year = jsonData.year || new Date().getFullYear();
+      condition = jsonData.condition || "جديدة";
+      description = jsonData.description || "";
+      kilometers = jsonData.kilometers || 0;
       status = jsonData.status || "available";
       images = jsonData.images || [];
     }
@@ -86,11 +92,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     const result = await prisma.$transaction(async (tx) => {
-      // استخدم tx.cars.create بدلاً من tx.car.create
       const car = await tx.cars.create({
         data: {
           brand,
           model,
+          year,
+          condition,
           description,
           kilometers,
           status,
@@ -98,7 +105,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       });
 
       if (images.length > 0) {
-        // استخدم tx.car_images.createMany بدلاً من tx.carImage.createMany
         await tx.car_images.createMany({
           data: images.map((imageUrl: string) => ({
             car_id: car.id,
@@ -107,11 +113,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         });
       }
 
-      // استخدم tx.cars.findUnique بدلاً من tx.car.findUnique
       return await tx.cars.findUnique({
         where: { id: car.id },
         include: {
-          car_images: { // استخدم car_images بدلاً من images
+          car_images: {
             select: { image_url: true },
           },
         },
@@ -122,16 +127,18 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       throw new Error("Failed to create car");
     }
 
-    const formattedCar: CarResponse = {
+    const formattedCar = {
       id: result.id,
       brand: result.brand,
       model: result.model,
-      description: result.description || undefined,
-      kilometers: result.kilometers || undefined,
+      year: result.year || 0,
+      condition: result.condition || "جديدة",
+      description: result.description || "",
+      kilometers: result.kilometers || 0,
       status: result.status,
+      images: result.car_images.map((img) => img.image_url),
       created_at: result.created_at.toISOString(),
       updated_at: result.updated_at.toISOString(),
-      images: result.car_images.map((img) => img.image_url), // استخدم car_images بدلاً من images
     };
 
     return NextResponse.json(formattedCar, { status: 201 });

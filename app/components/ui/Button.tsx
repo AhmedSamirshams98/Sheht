@@ -11,7 +11,7 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 export const Button = ({ kind = "primary", children }: ButtonProps) => {
   const variantClasses = {
     primary:
-      "bg-[#FDB800]  text-black  text-[2.5vw] w-[24vw] h-[6vw]  rounded-[42.5px]  cursor-pointer",
+      "bg-[#FDB800]  text-black  text-[3vw]  md:text-[2vw] w-[28vw] md:w-[20vw] h-[6vw] md:h-[4vw]  rounded-[42.5px]  cursor-pointer",
     secondary:
       "bg-black text-white text-[2.2vw] w-[22vw] h-[4.2vw] rounded-[42.2px] cursor-pointer ",
     secondarySpecial:

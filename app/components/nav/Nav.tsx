@@ -16,8 +16,6 @@ const Nav = () => {
       setIsMobile(window.innerWidth <= 768);
     };
 
-    
-
     const updateNavHeight = () => {
       if (navRef.current) {
         setNavHeight(navRef.current.offsetHeight);
@@ -44,11 +42,9 @@ const Nav = () => {
   const isHome = pathname === "/";
 
   return (
-    <div
+    <header
       ref={navRef}
-      className='fixed top-0 left-0 text-white z-[100] px-[6%] py-[2%] w-full transition-all duration-300 '
-       
-
+      className="fixed top-0 left-0 text-white z-[100] px-[8%] py-[1%]  w-full transition-all duration-300 "
       style={{
         direction: "rtl",
         backgroundImage: !isHome ? `url(${backgroundimage.src})` : "none",
@@ -57,7 +53,7 @@ const Nav = () => {
       }}
     >
       {isMobile ? <MobileNav /> : <DesktopNav />}
-    </div>
+    </header>
   );
 };
 

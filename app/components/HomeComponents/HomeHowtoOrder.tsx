@@ -6,7 +6,7 @@ import { Button } from "../ui/Button";
 
 const HomeHowtoOrder = () => {
   return (
-    <div className="flex  flex-col items-center p-4  justify-center gap-6 w-full">
+    <div className="flex  flex-col items-center  justify-center gap-6 w-full">
       <h1 className="text-[4vw] md:text-[2.5vw]">
         كيف يمكنك طلب سيارتك المخصصة؟
       </h1>

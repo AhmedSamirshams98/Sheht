@@ -19,7 +19,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="font-graphic">
         <Nav />
-        <main className="relative top-0">
+        <main className="relative top-0 w-screen ">
           {" "}
           {/* إضافة padding-top */}
           {children}

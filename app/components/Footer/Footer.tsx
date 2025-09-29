@@ -36,7 +36,7 @@ const Footer = () => {
   return (
     <div
       id="contact"
-      className="bg-[#282828] text-black px-[8%] md:px-[6%] py-[8%] md:py-[2%] w-full flex flex-col lg:flex-row items-center justify-between gap-6"
+      className="bg-[#282828] text-black px-[8%]  py-[8%] md:py-[2%] w-full flex flex-col lg:flex-row items-center justify-between gap-6"
       style={{ direction: "rtl" }}
     >
       {/**right part of footer */}
@@ -122,12 +122,6 @@ const Footer = () => {
           </span>
         </h1>
         <div className="flex flex-row gap-6">
-          <Image
-            src={youtube}
-            width={35}
-            height={35}
-            alt="قناة يوتيوب شحتة للتجارة"
-          />
           <Link
             href="https://www.instagram.com/shehta.trading?igsh=NGIyM2M1M3poYng2"
             target="_blank"

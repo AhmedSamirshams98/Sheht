@@ -13,6 +13,6 @@ body {
 
   flex-direction: column;
 }
-html{
+html {
   scroll-behavior: smooth;
 }

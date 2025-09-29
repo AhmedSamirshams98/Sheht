@@ -33,11 +33,13 @@ model cars {
   id          Int          @id @default(autoincrement())
   brand       String
   model       String
+  year        Int         // أضف هذا الحقل
+  condition   String     // وأضف هذا الحقل
   description String?
   kilometers  Int?
   status      String       @default("available")
   created_at  DateTime     @default(now())
-  updated_at  DateTime     @updatedAt  // أضيف @updatedAt هنا
+  updated_at  DateTime     @updatedAt
   car_images  car_images[]
 
   @@map("cars")
