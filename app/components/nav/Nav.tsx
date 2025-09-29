@@ -1,3 +1,4 @@
+// components/Nav.tsx
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import DesktopNav from "./DesktopNav";
@@ -19,7 +20,6 @@ const Nav = () => {
     const updateNavHeight = () => {
       if (navRef.current) {
         setNavHeight(navRef.current.offsetHeight);
-        // نضيف padding-top على main
         const main = document.querySelector("main");
         if (main) {
           main.style.paddingTop = pathname === "/" ? "0px" : `${navHeight}px`;
@@ -40,11 +40,12 @@ const Nav = () => {
   }, [navHeight, pathname]);
 
   const isHome = pathname === "/";
+  const isDashboard = pathname?.startsWith("/dashboard");
 
   return (
     <header
       ref={navRef}
-      className="fixed top-0 left-0 text-white z-[100] px-[8%] py-[1%]  w-full transition-all duration-300 "
+      className="fixed top-0 left-0 text-white z-[100] px-[8%] py-[1%] w-full transition-all duration-300"
       style={{
         direction: "rtl",
         backgroundImage: !isHome ? `url(${backgroundimage.src})` : "none",
@@ -52,7 +53,11 @@ const Nav = () => {
         backgroundPosition: "center",
       }}
     >
-      {isMobile ? <MobileNav /> : <DesktopNav />}
+      {isMobile ? (
+        <MobileNav isDashboard={isDashboard} />
+      ) : (
+        <DesktopNav isDashboard={isDashboard} />
+      )}
     </header>
   );
 };

@@ -1,20 +1,6 @@
+import { Car } from "@/types/car";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
-
-export interface Car {
-  id?: number;
-  brand: string;
-  model: string;
-  year: number;
-  condition: string;
-
-  description: string;
-  kilometers: number;
-  status: string;
-  images: string[];
-  created_at?: string;
-  updated_at?: string;
-}
 
 interface CarStore {
   cars: Car[];

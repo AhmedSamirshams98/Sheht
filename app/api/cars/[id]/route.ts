@@ -1,15 +1,14 @@
 // app/api/cars/[id]/route.ts
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const carId = parseInt(params.id);
-
-    console.log("🔍 Fetching car with ID:", carId);
+    const { id } = await params;
+    const carId = parseInt(id);
 
     if (isNaN(carId)) {
       return NextResponse.json(
@@ -18,19 +17,12 @@ export async function GET(
       );
     }
 
-    // استخدم prisma.cars بدلاً من prisma.car
     const car = await prisma.cars.findUnique({
       where: { id: carId },
       include: {
-        car_images: {
-          select: {
-            image_url: true,
-          },
-        },
+        car_images: { select: { image_url: true } },
       },
     });
-
-    console.log("📦 Found car:", car);
 
     if (!car) {
       return NextResponse.json(
@@ -62,12 +54,20 @@ export async function GET(
 }
 
 export async function PUT(
-  request: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const carId = parseInt(params.id);
+    const { id } = await params;
+    const carId = parseInt(id);
     const data = await request.json();
+
+    if (isNaN(carId)) {
+      return NextResponse.json(
+        { error: "معرف السيارة غير صحيح" },
+        { status: 400 }
+      );
+    }
 
     const result = await prisma.$transaction(async (tx) => {
       await tx.cars.update({
@@ -121,25 +121,36 @@ export async function PUT(
   } catch (error) {
     console.error("Error updating car:", error);
     return NextResponse.json(
-      { error: "Failed to update car" },
+      { error: "فشل في تحديث السيارة" },
       { status: 500 }
     );
   }
 }
 
 export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const carId = parseInt(params.id);
+    const { id } = await params;
+    const carId = parseInt(id);
+
+    if (isNaN(carId)) {
+      return NextResponse.json(
+        { error: "معرف السيارة غير صحيح" },
+        { status: 400 }
+      );
+    }
 
     const existingCar = await prisma.cars.findUnique({
       where: { id: carId },
     });
 
     if (!existingCar) {
-      return NextResponse.json({ error: "Car not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "السيارة غير موجودة" },
+        { status: 404 }
+      );
     }
 
     await prisma.$transaction(async (tx) => {
@@ -153,14 +164,11 @@ export async function DELETE(
     });
 
     return NextResponse.json(
-      { message: "Car deleted successfully" },
+      { message: "تم حذف السيارة بنجاح" },
       { status: 200 }
     );
   } catch (error) {
     console.error("Error deleting car:", error);
-    return NextResponse.json(
-      { error: "Failed to delete car" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "فشل في حذف السيارة" }, { status: 500 });
   }
 }

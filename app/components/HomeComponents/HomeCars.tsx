@@ -17,7 +17,7 @@ interface HomeCarsProps {
 }
 
 const HomeCars = ({ isDashboard = false }: HomeCarsProps) => {
-  const { cars, fetchCars } = useCarStore();
+  const { cars, fetchCars, deleteCar } = useCarStore();
   const pathname = usePathname();
 
   useEffect(() => {
@@ -50,7 +50,7 @@ const HomeCars = ({ isDashboard = false }: HomeCarsProps) => {
       <div
         key={car.id}
         id="cars"
-        className="embla__slide p-[14px] bg-white rounded-[26px] overflow-hidden shadow-lg flex flex-col"
+        className="embla__slide p-[14px] bg-white rounded-[26px] overflow-hidden  shadow-lg flex flex-col"
       >
         {/* سلايدر صور السيارة */}
         <EmblaCarouselSlider slides={carSlides} options={{ loop: true }} />
@@ -94,6 +94,7 @@ const HomeCars = ({ isDashboard = false }: HomeCarsProps) => {
           <button className="bg-[#E6E6E6] font-bold text-black rounded-[42.5px] w-[45%]  text-[3vw] md:text-[1.5vw] xl:text-[1vw] p-1">
             {car.condition}
           </button>
+
           <Link
             href={`/cars/${car.id}`}
             className="bg-[#FDB800] font-bold text-black rounded-[42.5px] w-[45%]  text-[3vw] md:text-[1.5vw] xl:text-[1vw] p-1 flex items-center justify-center hover:bg-yellow-500 transition-colors"
@@ -101,13 +102,30 @@ const HomeCars = ({ isDashboard = false }: HomeCarsProps) => {
             قراءة المزيد
           </Link>
         </div>
+        {isDashboard && (
+          <div className="mt-2 flex gap-4 w-full ">
+            <button className="bg-blue-500 text-white px-3 py-1 w-full rounded-[26px] hover:bg-blue-600">
+              تعديل
+            </button>
+            <button
+              onClick={() => {
+                if (confirm("هل أنت متأكد من حذف هذه السيارة؟")) {
+                  deleteCar(car.id!);
+                }
+              }}
+              className="bg-red-500 text-white px-3 py-1 w-full rounded-[26px] hover:bg-red-600"
+            >
+              حذف
+            </button>
+          </div>
+        )}
       </div>
     );
   });
 
   return (
     <div
-      className={`flex flex-col items-center  min-h-[549px] gap-4 ${
+      className={`flex flex-col items-center overflow-hidden  min-h-[549px] gap-4 ${
         isHomePage ? "w-screen" : "w-full"
       } bg-[#FDB800]`}
       style={{ direction: "rtl" }}

@@ -24,7 +24,7 @@ export async function GET() {
 
     // جلب بيانات المستخدم من قاعدة البيانات
     const result = await pool.query(
-      "SELECT id, email, name, role FROM users WHERE id = $1",
+      "SELECT id, email, name, role, picture FROM users WHERE id = $1",
       [payload.sub]
     );
 
@@ -42,6 +42,7 @@ export async function GET() {
         email: user.email,
         name: user.name,
         role: user.role,
+        image: user.picture, // ⚠️ هنا نستخدم picture ونرسلها كـ image
       },
     });
   } catch (error) {

@@ -1,14 +1,23 @@
+// components/MobileNav.tsx
 import Image from "next/image";
 import React, { useState, useEffect } from "react";
 import shehtalogo from "../../../public/images/shehtalogo.png";
 import { RiCloseLine, RiMenu2Fill } from "react-icons/ri";
-import { navLinks } from "@/data/constants";
+import { mainNavLinks, dashboardNavLinks } from "@/data/constants";
 import Link from "next/link";
 
-const MobileNav = () => {
+interface MobileNavProps {
+  isDashboard?: boolean;
+}
+
+const MobileNav: React.FC<MobileNavProps> = ({ isDashboard = false }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
+
+  // اختيار الروابط بناءً على الصفحة
+  const links = isDashboard ? dashboardNavLinks : mainNavLinks;
+  const title = isDashboard ? "شحتة للإدارة" : "شحتة للتجارة";
 
   useEffect(() => {
     if (isMenuOpen) {
@@ -20,6 +29,7 @@ const MobileNav = () => {
       return () => clearTimeout(timer);
     }
   }, [isMenuOpen]);
+
   const closeMenu = () => {
     setIsMenuOpen(false);
   };
@@ -29,17 +39,20 @@ const MobileNav = () => {
   };
 
   return (
-    <div className="flex flex-row items-center jus py-2 tify-between w-full backdrop:backdrop-blur-3xl">
+    <div className="flex flex-row items-center justify-between w-full backdrop-blur-3xl py-2">
       <div className="flex flex-row justify-between w-full bg-gradient-to-r from-[#3B260680] to-[#3B260680]/50 rounded-[42px]">
-        <Link className="flex flex-row gap-1 items-center  z-[60]" href="/">
+        <Link 
+          className="flex flex-row gap-1 items-center z-[60]" 
+          href={isDashboard ? "/dashboard" : "/"}
+        >
           <Image
             width={31}
             height={40}
-            className=" object-cover"
+            className="object-cover"
             src={shehtalogo}
             alt="shehtatraidingcars شحتة للتجارة"
           />
-          <h1 className="font-bold  ">شحتة للتجارة</h1>
+          <h1 className="font-bold">{title}</h1>
         </Link>
 
         <button
@@ -50,6 +63,7 @@ const MobileNav = () => {
           {isMenuOpen ? <RiCloseLine /> : <RiMenu2Fill />}
         </button>
       </div>
+
       {/* القائمة الجانبية */}
       {isVisible && (
         <div
@@ -59,11 +73,11 @@ const MobileNav = () => {
           onClick={(e) => e.stopPropagation()}
         >
           <nav className="px-[8%] py-[20%]" dir="rtl">
-            {navLinks.map((link) => (
+            {links.map((link) => (
               <Link
                 key={link.id}
                 href={link.path}
-                className={`block py-3 text-white text-[4vw] rounded px-2 transition-all duration-300 ${
+                className={`block py-3 text-white text-[4vw] rounded px-2 transition-all duration-300 hover:text-[#fdba00] ${
                   isAnimating
                     ? "opacity-100 translate-x-0"
                     : "opacity-0 translate-x-4"
