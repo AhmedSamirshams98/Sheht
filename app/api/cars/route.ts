@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { handleFileUpload } from "@/lib/upload";
 
@@ -41,7 +41,7 @@ export async function GET(): Promise<NextResponse> {
   }
 }
 
-export async function POST(request: NextRequest): Promise<NextResponse> {
+export async function POST(request: Request): Promise<NextResponse> {
   try {
     const contentType: string = request.headers.get("content-type") || "";
 
@@ -59,7 +59,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
       brand = (formData.get("brand") as string) || "";
       model = (formData.get("model") as string) || "";
-      year = parseInt(formData.get("year") as string) || new Date().getFullYear();
+      year =
+        parseInt(formData.get("year") as string) || new Date().getFullYear();
       condition = (formData.get("condition") as string) || "جديدة";
       description = (formData.get("description") as string) || "";
 
@@ -142,7 +143,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     };
 
     return NextResponse.json(formattedCar, { status: 201 });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error creating car:", error);
     return NextResponse.json(
       { error: "Failed to create car. Please check your input." },

@@ -33,7 +33,7 @@ export default function Dashboard() {
     fetchCars,
     createCar,
     updateCar,
-    deleteCar,
+    // deleteCar,
     clearError,
   } = useCarStore();
 
@@ -285,41 +285,41 @@ export default function Dashboard() {
   };
 
   // حذف سيارة
-  const handleDeleteCar = async (carId: number) => {
-    if (!user || user.role !== "admin") {
-      setMessage("ليس لديك صلاحية لحذف السيارات");
-      return;
-    }
+  // const handleDeleteCar = async (carId: number) => {
+  //   if (!user || user.role !== "admin") {
+  //     setMessage("ليس لديك صلاحية لحذف السيارات");
+  //     return;
+  //   }
 
-    if (!confirm("هل أنت متأكد من أنك تريد حذف هذه السيارة؟")) {
-      return;
-    }
+  //   if (!confirm("هل أنت متأكد من أنك تريد حذف هذه السيارة؟")) {
+  //     return;
+  //   }
 
-    try {
-      await deleteCar(carId);
-      setMessage("تم حذف السيارة بنجاح");
-    } catch (error) {
-      console.error("Error deleting car:", error);
-      setMessage("حدث خطأ أثناء حذف السيارة");
-    }
-  };
+  //   try {
+  //     await deleteCar(carId);
+  //     setMessage("تم حذف السيارة بنجاح");
+  //   } catch (error) {
+  //     console.error("Error deleting car:", error);
+  //     setMessage("حدث خطأ أثناء حذف السيارة");
+  //   }
+  // };
 
   // بدء التعديل على سيارة
-  const startEdit = (car: Car) => {
-    setEditingCar(car);
-    setIsEditing(true);
-    setEditFormData({
-      brand: car.brand,
-      model: car.model,
-      year: car.year,
-      condition: car.condition,
-      description: car.description,
-      kilometers: car.kilometers,
-      status: car.status,
-      imageFiles: [],
-      imageUrls: [...car.images],
-    });
-  };
+  // const startEdit = (car: Car) => {
+  //   setEditingCar(car);
+  //   setIsEditing(true);
+  //   setEditFormData({
+  //     brand: car.brand,
+  //     model: car.model,
+  //     year: car.year,
+  //     condition: car.condition,
+  //     description: car.description,
+  //     kilometers: car.kilometers,
+  //     status: car.status,
+  //     imageFiles: [],
+  //     imageUrls: [...car.images],
+  //   });
+  // };
 
   // إلغاء التعديل
   const cancelEdit = () => {
@@ -383,6 +383,15 @@ export default function Dashboard() {
   };
 
   // إذا لم يكن المستخدم مسجلاً دخول
+  if (sessionLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div>
+        <p className="mt-4 text-gray-600">جاري التحقق من المصادقة...</p>
+      </div>
+    );
+  }
+
   if (!user) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">

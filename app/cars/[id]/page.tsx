@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useParams } from "next/navigation";
 import whats from "../../../public/images/whatsapp.svg";
 import phone from "../../../public/images/phonenumber.svg";
@@ -13,7 +13,6 @@ const CarDetailsPage = () => {
   const params = useParams();
   const carId = Number(params.id);
   const { currentCar, fetchCarById, loading } = useCarStore();
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
     if (carId) {

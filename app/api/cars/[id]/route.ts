@@ -1,8 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
+// app/api/cars/[id]/route.ts
+import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(
-  request: NextRequest,
+  request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
@@ -42,7 +43,6 @@ export async function GET(
       id: car.id,
       brand: car.brand,
       model: car.model,
-
       description: car.description,
       kilometers: car.kilometers,
       status: car.status,
@@ -61,9 +61,8 @@ export async function GET(
   }
 }
 
-// يمكنك إضافة PUT و DELETE لاحقاً إذا احتجت لهم
 export async function PUT(
-  request: NextRequest,
+  request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
@@ -71,7 +70,7 @@ export async function PUT(
     const data = await request.json();
 
     const result = await prisma.$transaction(async (tx) => {
-      const updatedCar = await tx.cars.update({
+      await tx.cars.update({
         where: { id: carId },
         data: {
           brand: data.brand,
@@ -110,7 +109,6 @@ export async function PUT(
       id: result.id,
       brand: result.brand,
       model: result.model,
-
       description: result.description,
       kilometers: result.kilometers,
       status: result.status,
@@ -130,7 +128,7 @@ export async function PUT(
 }
 
 export async function DELETE(
-  request: NextRequest,
+  request: Request,
   { params }: { params: { id: string } }
 ) {
   try {
