@@ -15,4 +15,26 @@ body {
 }
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+::-webkit-scrollbar {
+  width: 6px; /* سمك الـ scrollbar العمودي */
+  height: 8px; /* سمك الـ scrollbar الأفقي */
+}
+
+/* الجزء الخلفي للـ scrollbar */
+::-webkit-scrollbar-track {
+  background: #f1f1f1; /* اللون الخلفي */
+  border-radius: 5px; /* الزوايا */
+}
+
+/* الجزء القابل للسحب */
+::-webkit-scrollbar-thumb {
+  background: #fdb800; /* اللون الأساسي */
+  border-radius: 10px;
+}
+
+/* عند تمرير الماوس */
+::-webkit-scrollbar-thumb:hover {
+  background: #d49a00; /* لون أغمق عند hover */
 }

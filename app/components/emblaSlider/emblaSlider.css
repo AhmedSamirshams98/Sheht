@@ -1,6 +1,6 @@
 /* sliderStyles.css */
 .slider-container {
-  margin: auto;
+ 
   --slider-slide-spacing: 1rem;
   --slider-slide-size: 100%;
   direction: ltr;

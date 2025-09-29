@@ -18,8 +18,7 @@ const EmblaCarouselSlider: React.FC<PropType> = (props) => {
   const { slides, options } = props;
   const [emblaRef, emblaApi] = useEmblaCarousel(options);
 
-  const { selectedIndex, onDotButtonClick } =
-    useDotButton(emblaApi);
+  const { selectedIndex, onDotButtonClick } = useDotButton(emblaApi);
 
   const maxDots = 5;
 
@@ -39,7 +38,7 @@ const EmblaCarouselSlider: React.FC<PropType> = (props) => {
               slide,
               index // FIXED: Changed (index) to (slide, index)
             ) => (
-              <div className="newslides aspect-square" key={index}>
+              <div className="newslides " key={index}>
                 {" "}
                 {/* Use numeric index as key */}
                 {slide} {/* Render the slide content */}
@@ -51,15 +50,15 @@ const EmblaCarouselSlider: React.FC<PropType> = (props) => {
 
       <div className="controls mt-[1vh] w-full  flex flex-row justify-between">
         <div className="s">
-          <PrevButton
-            className="w-[4vw] md:w-[3vw] lg:w-[2vw]"
-            onClick={onPrevButtonClick}
-            disabled={prevBtnDisabled}
-          />
           <NextButton
             className="w-[4vw] md:w-[3vw] lg:w-[2vw]"
             onClick={onNextButtonClick}
             disabled={nextBtnDisabled}
+          />
+          <PrevButton
+            className="w-[4vw] md:w-[3vw] lg:w-[2vw]"
+            onClick={onPrevButtonClick}
+            disabled={prevBtnDisabled}
           />
         </div>
 

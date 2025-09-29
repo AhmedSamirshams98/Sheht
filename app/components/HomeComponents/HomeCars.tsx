@@ -49,6 +49,7 @@ const HomeCars = ({ isDashboard = false }: HomeCarsProps) => {
     return (
       <div
         key={car.id}
+        id="cars"
         className="embla__slide p-[14px] bg-white rounded-[26px] overflow-hidden shadow-lg flex flex-col"
       >
         {/* سلايدر صور السيارة */}

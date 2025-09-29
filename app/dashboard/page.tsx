@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useCarStore, Car } from "@/stores/carStore";
 import HomeCars from "../components/HomeComponents/HomeCars";
+import { Button } from "../components/ui/Button";
 
 interface CarFormData {
   brand: string;
@@ -382,16 +383,6 @@ export default function Dashboard() {
     }
   };
 
-  // إذا لم يكن المستخدم مسجلاً دخول
-  if (sessionLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
-        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600"></div>
-        <p className="mt-4 text-gray-600">جاري التحقق من المصادقة...</p>
-      </div>
-    );
-  }
-
   if (!user) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
@@ -414,67 +405,36 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen px-[7%] py-[3%] bg-gray-50">
+    <div className=" bg-gray-50 overflow-hidden p-2 ">
       {/* الهيدر */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="flex justify-between items-center">
-          <div className="flex items-center space-x-4">
-            <h1 className="text-2xl font-bold text-gray-800">
-              لوحة تحكم السيارات
-            </h1>
-            <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
-              Admin
-            </span>
-          </div>
-          <div className="flex items-center space-x-4">
-            <div className="text-right">
-              <p className="font-medium text-gray-800">
-                {user.name || user.email}
-              </p>
-              <p className="text-sm text-gray-600">مسؤول النظام</p>
-            </div>
-            {user.image && (
-              <Image
-                src={user.image}
-                alt={user.name || "User"}
-                width={40}
-                height={40}
-                className="rounded-full"
-              />
-            )}
-            <button
-              onClick={logout}
-              className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition duration-200"
+      <header className="bg-white flex flex-col md:flex-row items-center  mb-[4%]">
+        <div className="flex flex-col md:flex-row  items-center  justify-center md:justify-between px-[8%] w-full ">
+          <div className="text-right flex items-center justify-center flex-col">
+            <p
+              className="font-medium text-center text-gray-800"
+              style={{ direction: "rtl" }}
             >
+              مرحبا : {user.name || user.email}
+            </p>
+            <Button kind="primaryspeciallogout" onClick={logout} className="">
               تسجيل الخروج
-            </button>
+            </Button>
           </div>
+          <h1 className=" text-center md:text-right font-bold text-gray-800">
+            لوحة تحكم السيارات
+          </h1>
         </div>
       </header>
 
       {/* المحتوى الرئيسي */}
       <main className="">
-        {message && (
-          <div
-            className={`p-4 mb-6 rounded-lg ${
-              message.includes("نجاح") || message.includes("تم")
-                ? "bg-green-100 text-green-800 border border-green-200"
-                : "bg-red-100 text-red-800 border border-red-200"
-            }`}
-          >
-            <div className="flex justify-between items-center">
-              <span>{message}</span>
-              <button onClick={() => setMessage("")} className="text-xl">
-                ×
-              </button>
-            </div>
-          </div>
-        )}
-
-        <div className="flex flex-col gap-8">
+        <div
+          className="flex flex-col gap-8 px-[8%]"
+          style={{ direction: "rtl" }}
+        >
           {/* نموذج إضافة/تعديل سيارة */}
           <div className="bg-white p-6 rounded-lg shadow-sm border">
-            <h2 className="text-xl font-semibold mb-4 text-gray-800">
+            <h2 className="text-xl font-semibold mb-4 text-center md:text-right text-gray-800">
               {isEditing
                 ? `تعديل السيارة: ${editingCar?.brand} ${editingCar?.model}`
                 : "إضافة سيارة جديدة"}
@@ -672,19 +632,6 @@ export default function Dashboard() {
                   />
                 </div>
 
-                <div className="mb-4">
-                  <p className="text-sm mb-2 text-gray-600">
-                    أو إضافة روابط صور:
-                  </p>
-                  <button
-                    type="button"
-                    onClick={addImageUrl}
-                    className="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-600"
-                  >
-                    + إضافة رابط صورة
-                  </button>
-                </div>
-
                 {(isEditing ? editFormData.imageFiles : formData.imageFiles)
                   .length > 0 && (
                   <div className="mt-4">
@@ -755,11 +702,11 @@ export default function Dashboard() {
                 )}
               </div>
 
-              <div className="flex gap-3">
+              <div className="flex justify-center gap-3">
                 <button
                   type="submit"
                   disabled={storeLoading}
-                  className="flex-1 bg-green-500 text-white py-3 px-4 rounded-lg hover:bg-green-600 disabled:opacity-50 transition duration-200 font-medium"
+                  className="w-[20%] text-[1vw] bg-green-500 text-white py-3 px-4 rounded-lg hover:bg-green-600 disabled:opacity-50 transition duration-200 font-medium"
                 >
                   {storeLoading
                     ? "جاري الحفظ..."
@@ -782,12 +729,12 @@ export default function Dashboard() {
           </div>
 
           {/* قائمة السيارات */}
-          <div className="bg-white p-6 rounded-lg shadow-sm border">
+          <div className="bg-white overflow-hidden rounded-lg shadow-sm border">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold text-gray-800">
+              <h2 className="text-xl font-bold text-gray-800">
                 قائمة السيارات
               </h2>
-              <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+              <span className="bg-blue-100  px-3 py-1 rounded-full text-sm font-medium">
                 {cars.length} سيارة
               </span>
             </div>
@@ -801,25 +748,6 @@ export default function Dashboard() {
               </div>
             ) : cars.length === 0 ? (
               <div className="text-center py-8">
-                <svg
-                  className="w-16 h-16 text-gray-300 mx-auto mb-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 17a2 2 0 11-4 0 2 2 0 014 0zm10 0a2 2 0 11-4 0 2 2 0 014 0z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"
-                  />
-                </svg>
                 <p className="text-gray-500">لا توجد سيارات مضافة بعد.</p>
               </div>
             ) : (
