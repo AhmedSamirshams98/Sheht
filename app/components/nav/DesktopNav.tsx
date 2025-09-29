@@ -10,7 +10,7 @@ const DesktopNav = () => {
       {/**nav right part  */}
 
       {/**nav left part */}
-      <div className="w-full flex flex-row items-center p-[1%] justify-between rounded-[42px] bg-gradient-to-r from-[#3B260680] to-[#3B260680]/50 text-[1.2vw] lg:text-[1vw]">
+      <div className="w-full flex flex-row backdrop-blur-3xl items-center p-[1%] justify-between rounded-[42px] bg-gradient-to-r from-[#3B260680] to-[#3B260680]/50 text-[1.2vw] lg:text-[1vw]">
         <Link href="/">
           <div className="flex flex-row items-center  gap-4">
             <Image

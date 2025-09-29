@@ -6,7 +6,7 @@ import { DotButton, useDotButton } from "./EmblaSliderDotButton";
 import useEmblaCarousel from "embla-carousel-react";
 
 type PropType = {
-  slides: number[];
+  slides: React.ReactNode[];
   options?: EmblaOptionsType;
 };
 
