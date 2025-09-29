@@ -14,6 +14,8 @@ type PropType = {
   options?: EmblaOptionsType;
 };
 import "./emblaCarousel.css";
+import { Button } from "../ui/Button";
+import Link from "next/link";
 
 const EmblaCarousel: React.FC<PropType> = (props) => {
   const { slides, options } = props;
@@ -42,10 +44,14 @@ const EmblaCarousel: React.FC<PropType> = (props) => {
       </div>
 
       <div className="embla__controls">
-        {/* <div className="embla__buttons">
+        <div className="embla__buttons ">
           <PrevButton onClick={onPrevButtonClick} disabled={prevBtnDisabled} />
+          <Link className="w-full relative flex justify-center" href="/allcars">
+            <Button kind="secondarySpecial">عرض الكل</Button>
+          </Link>
+
           <NextButton onClick={onNextButtonClick} disabled={nextBtnDisabled} />
-        </div> */}
+        </div>
 
         {/* <div className="embla__dots">
           {scrollSnaps.map((_, index) => (

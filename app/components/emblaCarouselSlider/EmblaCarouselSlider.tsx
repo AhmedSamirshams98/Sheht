@@ -18,8 +18,10 @@ const EmblaCarouselSlider: React.FC<PropType> = (props) => {
   const { slides, options } = props;
   const [emblaRef, emblaApi] = useEmblaCarousel(options);
 
-  const { selectedIndex, scrollSnaps, onDotButtonClick } =
+  const { selectedIndex, onDotButtonClick } =
     useDotButton(emblaApi);
+
+  const maxDots = 5;
 
   const {
     prevBtnDisabled,
@@ -50,24 +52,24 @@ const EmblaCarouselSlider: React.FC<PropType> = (props) => {
       <div className="controls mt-[1vh] w-full  flex flex-row justify-between">
         <div className="s">
           <PrevButton
-            className="w-[1.5vw]"
+            className="w-[4vw] md:w-[3vw] lg:w-[2vw]"
             onClick={onPrevButtonClick}
             disabled={prevBtnDisabled}
           />
           <NextButton
-            className="w-[1.5vw]"
+            className="w-[4vw] md:w-[3vw] lg:w-[2vw]"
             onClick={onNextButtonClick}
             disabled={nextBtnDisabled}
           />
         </div>
 
         <div className="points">
-          {scrollSnaps.map((_, index) => (
+          {[...Array(maxDots)].map((_, index) => (
             <DotButton
               key={index}
               onClick={() => onDotButtonClick(index)}
               className={"point".concat(
-                index === selectedIndex ? " point--selected" : ""
+                selectedIndex % maxDots === index ? " point--selected" : ""
               )}
             />
           ))}

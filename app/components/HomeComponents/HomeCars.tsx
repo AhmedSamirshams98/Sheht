@@ -5,7 +5,6 @@ import Image from "next/image";
 import EmblaCarouselSlider from "../emblaCarouselSlider/EmblaCarouselSlider";
 import "../emblaCarouselSlider/emblaCarouselSlider.css";
 import "../emblaCarousel/emblaCarousel.css";
-import { Button } from "../ui/Button";
 import whats from "@/public/images/whatsapp.svg";
 import phone from "@/public/images/phonenumber.svg";
 import EmblaCarousel from "../emblaCarousel/EmblaCarousel";
@@ -50,45 +49,53 @@ const HomeCars = ({ isDashboard = false }: HomeCarsProps) => {
     return (
       <div
         key={car.id}
-        className="embla__slide p-[18px] bg-white rounded-[26px] overflow-hidden shadow-lg flex flex-col"
+        className="embla__slide p-[14px] bg-white rounded-[26px] overflow-hidden shadow-lg flex flex-col"
       >
         {/* سلايدر صور السيارة */}
         <EmblaCarouselSlider slides={carSlides} options={{ loop: true }} />
 
         {/* تفاصيل السيارة */}
         <div className="w flex flex-col gap-2 mt-[2vh] w-full aspect-video">
-          <h3 className="text-black font-semibold text-center text-[6vw] md:text-[1.5vw]">
+          <h3 className="text-black font-semibold text-center text-[4vw] lg:text-[1.4vw]">
             {car.model}
           </h3>
           <div className="flex justify-between">
-            <h1 className="text-black text-[4vw] md:text-[1vw] font-semibold">
+            <h1 className="text-black text-[3vw] lg:text-[1vw] font-medium">
               {car.brand}
             </h1>
             <div className="flex gap-4">
-              <span className="text-black text-[4vw] md:text-[1vw] font-semibold">
+              <span className="text-black text-[3vw] lg:text-[1vw] font-medium">
                 {car.kilometers} KM
               </span>
-              <span className="text-black text-[4vw] md:text-[1vw] font-semibold">
+              <span className="text-black text-[3vw] lg:text-[1vw] font-medium">
                 {car.year}
               </span>
             </div>
           </div>
           <p
             style={{ direction: "rtl" }}
-            className="text-black text-justify text-[4vw] md:text-[1.5vw] lg:text-[1vw] font-medium line-clamp-4"
+            className="text-black text-justify text-[3vw] md:text-[1.5vw] lg:text-[1vw] font-bold line-clamp-4"
           >
             {car.description}
           </p>
         </div>
         <div className="flex flex-row justify-between gap-2 items-center w-full">
-          <Image width={40} height={40} src={whats} alt="whatsapp" />
-          <Image width={40} height={40} src={phone} alt="phone" />
-          <button className="bg-[#E6E6E6] font-bold text-black rounded-[42.5px] w-[50%] h-[32px] text-[4vw] md:text-[1.5vw] p-1">
+          <Image
+            className="w-[8vw] md:w-[4vw] lg:w-[2vw]"
+            src={whats}
+            alt="whatsapp"
+          />
+          <Image
+            className="w-[8vw] md:w-[4vw] lg:w-[2vw]"
+            src={phone}
+            alt="phone"
+          />
+          <button className="bg-[#E6E6E6] font-bold text-black rounded-[42.5px] w-[45%]  text-[3vw] md:text-[1.5vw] xl:text-[1vw] p-1">
             {car.condition}
           </button>
           <Link
             href={`/cars/${car.id}`}
-            className="bg-[#FDB800] font-bold text-black rounded-[42.5px] w-[50%] h-[32px] text-[4vw] md:text-[1.5vw] p-1 flex items-center justify-center hover:bg-yellow-500 transition-colors"
+            className="bg-[#FDB800] font-bold text-black rounded-[42.5px] w-[45%]  text-[3vw] md:text-[1.5vw] xl:text-[1vw] p-1 flex items-center justify-center hover:bg-yellow-500 transition-colors"
           >
             قراءة المزيد
           </Link>
@@ -99,12 +106,12 @@ const HomeCars = ({ isDashboard = false }: HomeCarsProps) => {
 
   return (
     <div
-      className={`flex flex-col items-center justify-around px-[8%] py-[8%] gap-4 ${
+      className={`flex flex-col items-center  min-h-[549px] gap-4 ${
         isHomePage ? "w-screen" : "w-full"
       } bg-[#FDB800]`}
       style={{ direction: "rtl" }}
     >
-      <h1 className="px-[8%] text-[6vw] md:text-[2vw] font-bold w-full text-center md:text-right text-gray-900">
+      <h1 className="px-[8%] text-[6vw] mt-6  md:text-[3vw] font-bold w-full text-center md:text-right text-gray-900">
         المعروضــات ✨
       </h1>
       <div className="w-full relative flex items-center justify-center">
@@ -116,10 +123,6 @@ const HomeCars = ({ isDashboard = false }: HomeCarsProps) => {
           </div>
         )}
       </div>
-
-      <Link className="w-full flex justify-center" href="/allcars">
-        <Button kind="secondarySpecial">عرض الكل</Button>
-      </Link>
     </div>
   );
 };
